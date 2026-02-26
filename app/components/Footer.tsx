@@ -4,7 +4,7 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaPhoneAlt, FaMapMarkerAlt } from 
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t">
+    <footer className="bg-white border-t border-[#062E52]">
 
       <div className="max-w-7xl mx-auto px-4 py-6">
 
