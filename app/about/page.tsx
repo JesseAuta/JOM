@@ -9,8 +9,8 @@ export default function AboutPage() {
       <div className="w-full px-4 md:px-6 lg:px-0 lg:max-w-6xl xl:max-w-7xl mx-auto">
 
         {/* ================= HERO ================= */}
-        <section className="relative w-full mt-6">
-          <div className="relative w-full aspect-[16/9] sm:aspect-[16/7] lg:aspect-[13/5] overflow-hidden rounded-none lg:rounded-xl">
+        <section className="relative w-full mt-0">
+          <div className="relative w-full aspect-[13/9] sm:aspect-[13/8] lg:aspect-[11/7] overflow-hidden rounded-none lg:rounded-xl">
             <Image
               src="/company.png"
               alt="JOM Auto Team"
@@ -21,14 +21,16 @@ export default function AboutPage() {
             />
 
             {/* Floating buttons */}
-            <div className="absolute right-3 bottom-3 md:right-4 md:bottom-4 flex flex-col gap-2 md:gap-3">
-              <button className="w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition">
-                <Image src="/phone.png" alt="Call" width={25} height={25} />
-              </button>
-              <button className="w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition">
-                <Image src="/clock.png" alt="Time" width={30} height={30} />
-              </button>
-            </div>
+    <div className="absolute right-3 md:right-4 flex flex-col gap-2 md:gap-3 z-20 bottom-16 md:bottom-20 lg:bottom-24"
+     style={{ bottom: '100px', top: '90px' }}>
+  <button className="w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition">
+    <Image src="/phone.png" alt="Call" width={18} height={18} />
+  </button>
+
+  <button className="w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition">
+    <Image src="/clock.png" alt="Time" width={18} height={18} />
+  </button>
+</div>
           </div>
         </section>
 
@@ -58,7 +60,7 @@ export default function AboutPage() {
                 Comfortable waiting area
               </h2>
 
-              <div className="relative h-[190px] md:h-[220px] rounded-xl overflow-hidden mb-6">
+              <div className="relative h-[190px] md:h-[285px] rounded-xl overflow-hidden mb-6">
                 <Image
                   src="/office.png"
                   alt="Waiting Area"
@@ -67,7 +69,7 @@ export default function AboutPage() {
                 />
               </div>
 
-              <p className="mb-4 bg-gray-200 hover:bg-yellow-100 rounded-full px-12 py-2 text-sm md:text-base font-semibold text-gray-900 max-w-lg cursor-pointer transition-all shadow-sm hover:shadow-md">
+              <p className="mb-2 bg-gray-200 hover:bg-yellow-100 rounded-full px-19 py-0 text-sm md:text-base font-semibold text-gray-900 max-w-1lg cursor-pointer transition-all shadow-sm hover:shadow-md">
                 Here you can wait in peace while we take care of your vehicle.
               </p>
 
@@ -97,7 +99,7 @@ export default function AboutPage() {
               Convenient delivery service
             </h2>
 
-            <div className="relative h-[220px] md:h-[260px] rounded-xl overflow-hidden mb-5">
+            <div className="relative h-[220px] md:h-[290px] rounded-xl overflow-hidden mb-5">
               <Image
                 src="/deliver.png"
                 alt="Delivery Service"
@@ -113,7 +115,7 @@ export default function AboutPage() {
             </p>
 
             <div className="mt-6 flex justify-center">
-              <h2 className="w-full max-w-2xl bg-yellow-400 text-gray-900 text-center font-bold text-lg md:text-2xl py-6 md:py-8 rounded-2xl shadow-lg hover:bg-yellow-500 transition-all">
+              <h2 className="w-full max-w-2xl bg-gray-400 text-gray-900 text-center font-bold text-lg md:text-2xl py-6 md:py-8 rounded-2xl shadow-lg hover:bg-yellow-200 transition-all">
                 JOM AUTO Service – Quality you can rely on.
               </h2>
             </div>
