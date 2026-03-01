@@ -24,22 +24,22 @@ export default function Header() {
       : "text-[#062E52] font-bold";
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md h-30 transition-all duration-300">
+    <header className="sticky top-0 z-50 bg-white shadow-md h-20 transition-all duration-300">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 h-full">
 
         {/* Logo */}
         <Link href="/">
           <Image
-            src="/images/logo.png"
+            src="/images/logo2.png"
             alt="JOM Auto Logo"
             width={140}
             height={30}
-            className="object-contain cursor-pointer"
+            className="object-contain cursor-pointer text-[#062E52] font-bold text-lg"
           />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm">
+        <nav className="hidden md:flex items-center gap-12 text-lg ga">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -96,7 +96,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white shadow-inner border-t">
+        <div className="md:hidden bg-white shadow-inner">
           <div className="flex flex-col px-4 py-3 space-y-2 text-sm">
             {navLinks.map((link) => (
               <Link

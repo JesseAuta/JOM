@@ -1,10 +1,11 @@
 'use client';
 
 import Image from 'next/image';
+import SearchBar from '../components/SearchBar';
 
 export default function AboutPage() {
   return (
-    <main className='w-full bg-white'>
+    <main className="w-full bg-white">
       {/* PAGE CONTAINER */}
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         {/* ================= HERO ================= */}
