@@ -44,7 +44,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { HiMenu, HiX } from 'react-icons/hi'; // hamburger and close icons
+import { HiMenu, HiX } from 'react-icons/hi';
 
 export default function RootLayout({
   children,
