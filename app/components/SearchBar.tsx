@@ -63,7 +63,7 @@ const SearchBar: FC<SearchBarProps> = ({ data = [], onSelect, delay = 300 }) => 
   };
 
   return (
-    <div className="border-t bg-gray-50 py-4 relative" ref={dropdownRef}>
+    <div className=" py-4 relative" ref={dropdownRef}>
       <div className="mx-auto max-w-7xl px-4">
         <input
           type="text"
