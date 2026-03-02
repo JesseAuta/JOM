@@ -1,156 +1,168 @@
-'use client';
 
-import Image from 'next/image';
-import SearchBar from '../components/SearchBar';
+
+"use client";
+
+import Image from "next/image";
+import { motion } from "framer-motion";
+
+// Variants for scroll animations
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const statsVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export default function AboutPage() {
   return (
-    <main className="w-full bg-white">
-      {/* PAGE CONTAINER */}
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
-        {/* ================= HERO ================= */}
-        <section className='relative w-full'>
-          <div className='relative w-full aspect-[15/9] sm:aspect-[13/8] lg:aspect-[9/6] overflow-hidden rounded-none md:rounded-xl'>
+    <main className="w-full bg-gray-50">
+
+      {/* --- ABOUT US INTRO --- */}
+      <motion.section
+        className="max-w-6xl mx-auto px-6 py-16 text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeUp}
+        transition={{ duration: 0.8 }}
+      >
+        <h1 className="text-4xl font-bold mb-4 text-blue-900">About JOM Auto</h1>
+        <p className="text-gray-900 leading-relaxed max-w-3xl mx-auto">
+          At JOM Auto, we combine expertise, precision, and dedication to provide
+          top-quality automotive services. Our team works daily to ensure every
+          vehicle is handled with the highest standards of care and professionalism.
+        </p>
+      </motion.section>
+
+      {/* --- HERO CARDS (Animated) --- */}
+      <section className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-3 gap-8">
+        {[
+          {
+            src: "/company.png",
+            alt: "JOM Auto Team",
+            title: "Our Professional Team",
+            desc: "Our experienced mechanics work with precision and care, ensuring every repair is done quickly and professionally.",
+          },
+          {
+            src: "/deliver.png",
+            alt: "Fast & Reliable Delivery",
+            title: "Fast & Reliable Delivery",
+            desc: "We provide fast delivery of parts and services, ensuring your car is ready when you need it.",
+          },
+          {
+            src: "/office.png",
+            alt: "Our Office",
+            title: "Comfortable Office",
+            desc: "Enjoy our clean, modern waiting area with Wi-Fi and refreshments while your vehicle is being serviced.",
+          },
+        ].map((card, index) => (
+          <motion.div
+            key={index}
+            className="bg-white rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 overflow-hidden"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: index * 0.2 }}
+            variants={fadeUp}
+          >
             <Image
-              src='/company.png'
-              alt='JOM Auto Team'
-              fill
-              priority
-              className='object-cover'
-              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px'
+              src={card.src}
+              alt={card.alt}
+              width={1200}
+              height={800}
+              className="w-full h-56 object-cover"
             />
-
-            {/* HERO STICKY ACTIONS */}
-            <div className='absolute inset-y-0 right-3 sm:right-4 md:right-6 flex items-center z-20'>
-              <div className='sticky top-[45%] -translate-y-1/2 flex flex-col gap-3'>
-                {/* CALL ACTION */}
-                <button
-                  type='button'
-                  aria-label='Contact us'
-                  onClick={() => {
-                    // later: open contact modal or route
-                    console.log('Contact action');
-                  }}
-                  className='w-11 h-11 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center
-                 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2
-                 active:scale-95 transition'
-                >
-                  <Image src='/phone.png' alt='' width={25} height={25} />
-                </button>
-
-                {/* HOURS / INFO ACTION */}
-                <button
-                  type='button'
-                  aria-label='Opening hours'
-                  onClick={() => {
-                    // later: open hours modal
-                    console.log('Hours action');
-                  }}
-                  className='w-11 h-11 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center
-                 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2
-                 active:scale-95 transition'
-                >
-                  <Image src='/clock.png' alt='' width={30} height={30} />
-                </button>
-              </div>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-3">{card.title}</h2>
+              <p className="text-gray-600">{card.desc}</p>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        ))}
+      </section>
 
-        {/* ================= CONTENT ================= */}
-        <section className='py-10 sm:py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14'>
-          {/* LEFT COLUMN */}
-          <div>
-            <h1 className='text-2xl sm:text-3xl font-extrabold text-gray-900'>
-              About Us
-            </h1>
-            <div className='w-28 h-2 bg-blue-500 rounded-full mt-0 mb-0' />
-
-            <p className='bg-white rounded-2xl p-5 sm:p-6 shadow-lg text-gray-700 text-sm sm:text-base leading-relaxed max-w-xl'>
-              Since our founding, we have stood for{' '}
-              <strong>professionalism, quality</strong> and{' '}
-              <strong>trust</strong>. Our experienced team works daily to
-              complete all orders quickly, precisely, and on time. Customer
-              satisfaction is always our top priority.
-            </p>
-
-            {/* Waiting Area */}
-            <div className='mt-10'>
-              <h2 className='font-bold text-gray-900 mb-4 flex items-center gap-2'>
-                <span className='w-2.5 h-2.5 bg-yellow-400 rounded-full' />
-                Comfortable waiting area
-              </h2>
-
-              <div className='relative h-44 sm:h-80 rounded-xl overflow-hidden mb-2'>
-                <Image
-                  src='/office.png'
-                  alt='Waiting Area'
-                  fill
-                  className='object-cover'
-                />
-              </div>
-
-              <div className='inline-flex max-w-full items-center gap-3 rounded-2xl sm:rounded-full bg-yellow-50 px-4 sm:px-6 py-2 shadow-sm'>
-                <span className='h-2 w-2 flex-shrink-0 rounded-full bg-yellow-400' />
-                <p className='text-sm sm:text-base italic font-semibold text-gray-900 text-center sm:text-left'>
-                  Comfort room for waiting customers.
-                </p>
-              </div>
-
-              <ul className='grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md mt-5'>
-                {[
-                  'Cozy, soft sofas',
-                  'Television for entertainment',
-                  'Free Wi-Fi',
-                  'Coffee machines with fresh coffee',
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className='flex items-start gap-2 text-sm sm:text-base text-gray-800'
-                  >
-                    <span className='text-yellow-400 font-bold'>✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div>
-            <h2 className='font-bold text-gray-900 mb-4 flex items-center gap-2'>
-              <span className='w-2.5 h-2.5 bg-yellow-400 rounded-full' />
-              Convenient delivery service
-            </h2>
-
-            <div className='relative h-48 sm:h-64 rounded-xl overflow-hidden mb-5'>
-              <Image
-                src='/deliver.png'
-                alt='Delivery Service'
-                fill
-                className='object-cover'
-              />
-            </div>
-
-            <p className='bg-white rounded-3xl p-4 sm:p-3 m-0 shadow-lg text-gray-700 text-sm sm:text-base italic leading-relaxed max-w-lg'>
-              For customers who don't have time to wait, we offer a convenient
-              pick-up and delivery service. Upon request, we collect your car
-              and return it once the work is complete.
-            </p>
-
-            <div className='mt-10 flex justify-center'>
-              <div className='w-full max-w-xl rounded-2xl bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-7 text-center shadow-xl'>
-                <p className='text-lg sm:text-2xl font-extrabold text-white tracking-wide'>
-                  JOM AUTO Service
-                </p>
-                <span className='mt-2 block text-sm sm:text-base text-yellow-400 font-semibold'>
-                  Quality you can rely on
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* --- STICKY ACTION ICONS (Responsive) --- */}
+      <div className="fixed right-6 top-1/3 flex flex-col gap-3 z-50">
+        <button className="w-12 h-12 sm:w-14 sm:h-14 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center hover:scale-105 transform transition">
+          <Image src="/phone.png" alt="Call" width={24} height={24} className="sm:w-7 sm:h-7"/>
+        </button>
+        <button className="w-12 h-12 sm:w-14 sm:h-14 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center hover:scale-105 transform transition">
+          <Image src="/clock.png" alt="Hours" width={24} height={24} className="sm:w-7 sm:h-7"/>
+        </button>
       </div>
+
+      {/* --- WHY CHOOSE US --- */}
+      <section className="py-16 max-w-6xl mx-auto px-6">
+        <h2 className="text-3xl font-semibold text-center mb-12 text-blue-900">Why Choose JOM Auto?</h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="flex gap-4">
+            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
+            <p className="text-gray-700">Certified and experienced mechanics</p>
+          </div>
+          <div className="flex gap-4">
+            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
+            <p className="text-gray-700">Fast turnaround times</p>
+          </div>
+          <div className="flex gap-4">
+            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
+            <p className="text-gray-700">Modern diagnostic equipment</p>
+          </div>
+          <div className="flex gap-4">
+            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
+            <p className="text-gray-700">Customer-focused service</p>
+          </div>
+        </div>
+      </section>
+
+      {/* --- STATS / TRUST (Animated) --- */}
+      <motion.section
+        className="bg-gray-900 text-white py-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeUp}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center">
+          {[
+            { value: "7+", label: "Years Experience" },
+            { value: "5,000+", label: "Happy Customers" },
+            { value: "100%", label: "Commitment to Quality" },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              className=""
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: i * 0.2 }}
+            >
+              <h3 className="text-4xl font-bold text-yellow-400">{stat.value}</h3>
+              <p className="mt-2 text-gray-300">{stat.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* --- CTA --- */}
+      <section className="py-16 text-center bg-white">
+        <h2 className="text-3xl font-semibold mb-6 text-blue-900">
+          Ready to Service Your Vehicle?
+        </h2>
+        <p className="text-gray-600 mb-8">
+          Book your appointment today and experience professional automotive care.
+        </p>
+
+        <a
+          href="/appointment"
+          className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3 rounded-full transition"
+        >
+          Make an Appointment
+        </a>
+      </section>
+
     </main>
   );
 }
