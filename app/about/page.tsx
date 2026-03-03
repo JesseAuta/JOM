@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { title } from "process";
 
-// Variants for scroll animations
+// Scroll animation variant
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
@@ -17,8 +16,7 @@ export default function AboutPage() {
       alt: "JOM Auto Team",
       title: "Our Professional Team",
       desc: "Our experienced mechanics work with precision and care, ensuring every repair is done quickly and professionally.",
-      titleColor: "text-yellow-500 ",
-      
+      titleColor: "text-yellow-500",
       descColor: "text-gray-700",
     },
     {
@@ -40,7 +38,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="w-full bg-gray-50">
+    <main className="w-full bg-gray-50 relative">
 
       {/* --- ABOUT US INTRO --- */}
       <motion.section
@@ -51,7 +49,9 @@ export default function AboutPage() {
         variants={fadeUp}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="text-4xl font-bold mb-4 text-blue-800">About JOM Auto</h1>
+        <h1 className="text-4xl font-bold mb-4 text-blue-800">
+          About JOM Auto
+        </h1>
         <p className="text-gray-600 leading-relaxed max-w-3xl mx-auto">
           At JOM Auto, we combine expertise, precision, and dedication to provide
           top-quality automotive services. Our team works daily to ensure every
@@ -59,12 +59,12 @@ export default function AboutPage() {
         </p>
       </motion.section>
 
-      {/* --- HERO CARDS (Animated) --- */}
-      <section className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-3 gap-8 relative">
+      {/* --- HERO CARDS --- */}
+      <section className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-3 gap-8">
         {cards.map((card, index) => (
           <motion.div
             key={index}
-            className="bg-white rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 overflow-hidden relative"
+            className="bg-white rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 overflow-hidden"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
@@ -79,23 +79,13 @@ export default function AboutPage() {
               className="w-full h-56 object-cover"
             />
 
-            {/* --- MOBILE PHONE & CLOCK ICONS FIXED ON COMPANY CARD ONLY --- */}
-            {index === 0 && (
-              <div className="absolute bottom-4 right-4 flex gap-3 md:hidden">
-                <button className="w-12 h-12 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center hover:scale-105 transform transition">
-                  <Image src="/phone.png" alt="Call" width={24} height={24} />
-                </button>
-                <button className="w-12 h-12 bg-yellow-400 rounded-full shadow-xl flex items-center justify-center hover:scale-105 transform transition">
-                  <Image src="/clock.png" alt="Hours" width={24} height={24} />
-                </button>
-              </div>
-            )}
-
             <div className="p-6">
               <h2 className={`text-xl font-semibold mb-3 ${card.titleColor}`}>
                 {card.title}
               </h2>
-              <p className={`${card.descColor}`}>{card.desc}</p>
+              <p className={`${card.descColor}`}>
+                {card.desc}
+              </p>
             </div>
           </motion.div>
         ))}
@@ -103,33 +93,38 @@ export default function AboutPage() {
 
       {/* --- WHY CHOOSE US --- */}
       <section className="py-16 max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-semibold text-center mb-12 text-blue-800">Why Choose JOM Auto?</h2>
+        <h2 className="text-3xl font-semibold text-center mb-12 text-blue-800">
+          Why Choose JOM Auto?
+        </h2>
+
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="flex gap-4">
-            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
-            <p className="text-gray-700">Certified and experienced mechanics</p>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
-            <p className="text-gray-700">Fast turnaround times</p>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
-            <p className="text-gray-700">Modern diagnostic equipment</p>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
-            <p className="text-gray-700">Customer-focused service</p>
-          </div>
+          {[
+            "Certified and experienced mechanics",
+            "Fast turnaround times",
+            "Modern diagnostic equipment",
+            "Customer-focused service",
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              className="flex gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.2 }}
+            >
+              <div className="w-3 h-3 mt-2 bg-yellow-400 rounded-full" />
+              <p className="text-gray-700">{item}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* --- STATS / TRUST (Animated) --- */}
+      {/* --- STATS --- */}
       <motion.section
         className="bg-gray-900 text-white py-16"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true }}
         variants={fadeUp}
         transition={{ duration: 0.8 }}
       >
@@ -143,11 +138,15 @@ export default function AboutPage() {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
             >
-              <h3 className="text-4xl font-bold text-yellow-400">{stat.value}</h3>
-              <p className="mt-2 text-gray-300">{stat.label}</p>
+              <h3 className="text-4xl font-bold text-yellow-400">
+                {stat.value}
+              </h3>
+              <p className="mt-2 text-gray-300">
+                {stat.label}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -158,6 +157,7 @@ export default function AboutPage() {
         <h2 className="text-3xl font-semibold mb-6 text-blue-800">
           Ready to Service Your Vehicle?
         </h2>
+
         <p className="text-gray-600 mb-8">
           Book your appointment today and experience professional automotive care.
         </p>
@@ -169,6 +169,43 @@ export default function AboutPage() {
           Make an Appointment
         </a>
       </section>
+
+      {/* --- FIXED SIDE ACTION BUTTONS (ABOUT PAGE ONLY) --- */}
+      <div className="fixed right-5 sm:right-6 top-1/3 flex flex-col gap-3 z-50">
+        
+        {/* Phone - Click to Call */}
+        <a
+          href="tel:+491234567890"
+          className="bg-yellow-400 rounded-full shadow-xl flex items-center justify-center
+                     w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12
+                     hover:scale-105 active:scale-95 transition"
+        >
+          <Image
+            src="/phone.png"
+            alt="Call"
+            width={22}
+            height={22}
+            className="object-contain"
+          />
+        </a>
+
+        {/* Clock - Scroll to Top (or change link if needed) */}
+        <a
+          href="#"
+          className="bg-yellow-400 rounded-full shadow-xl flex items-center justify-center
+                     w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12
+                     hover:scale-105 active:scale-95 transition"
+        >
+          <Image
+            src="/clock.png"
+            alt="Opening Hours"
+            width={22}
+            height={22}
+            className="object-contain"
+          />
+        </a>
+
+      </div>
 
     </main>
   );
