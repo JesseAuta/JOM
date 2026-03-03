@@ -16,7 +16,7 @@ export default function AboutPage() {
       alt: "JOM Auto Team",
       title: "Our Professional Team",
       desc: "Our experienced mechanics work with precision and care, ensuring every repair is done quickly and professionally.",
-      titleColor: "text-yellow-500",
+      titleColor: "text-yellow-400",
       descColor: "text-gray-700",
     },
     {
@@ -32,7 +32,7 @@ export default function AboutPage() {
       alt: "Our Office",
       title: "Comfortable Office",
       desc: "Enjoy our clean, modern waiting area with Wi-Fi and refreshments while your vehicle is being serviced.",
-      titleColor: "text-green-600",
+      titleColor: "text-yellow-400",
       descColor: "text-gray-700",
     },
   ];

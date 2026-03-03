@@ -15,7 +15,7 @@ export default function Header() {
   const navLinks = [
     { name: "Services", href: "/services" },
     { name: "About Us", href: "/about" },
-    { name: "Make an Appointment", href: "/appointment" },
+    { name: "Book appointment", href: "/booking" },
   ];
 
   const isActive = (path: string) =>
