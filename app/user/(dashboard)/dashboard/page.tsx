@@ -1,229 +1,3 @@
-// 'use client';
-
-// import { useState } from 'react';
-
-// type Status = 'new' | 'in_progress' | 'done';
-
-// interface Booking {
-//   id: number;
-//   carNumber: string;
-//   service: string;
-//   date: string;
-//   master: string;
-//   status: Status;
-//   note?: string;
-// }
-
-// /*MOCK DATA*/
-
-// const initialBookings: Booking[] = [
-//   {
-//     id: 101,
-//     carNumber: 'B-AB1234',
-//     service: 'Oil Change',
-//     date: '2025-04-25 10:00',
-//     master: 'Jesse',
-//     status: 'new',
-//   },
-//   {
-//     id: 102,
-//     carNumber: 'HH-XY8899',
-//     service: 'Tires',
-//     date: '2025-04-25 12:00',
-//     master: 'Olena',
-//     status: 'in_progress',
-//   },
-//   {
-//     id: 103,
-//     carNumber: 'M-AA9999',
-//     service: 'Diagnostics',
-//     date: '2025-04-26 09:00',
-//     master: 'Murphy',
-//     status: 'done',
-//   },
-// ];
-
-// export default function Dashboard() {
-//   const [bookings, setBookings] = useState(initialBookings);
-
-//   const [search, setSearch] = useState('');
-//   const [dateFilter, setDateFilter] = useState('');
-//   const [masterFilter, setMasterFilter] = useState('');
-//   const [serviceFilter, setServiceFilter] = useState('');
-//   const [statusFilter, setStatusFilter] = useState('');
-
-//   /* DELETE */
-
-//   const deleteBooking = (id: number) => {
-//     setBookings(bookings.filter((b) => b.id !== id));
-//   };
-
-//   /* FILTER LOGIC */
-
-//   const filtered = bookings.filter((b) => {
-//     return (
-//       b.carNumber.toLowerCase().includes(search.toLowerCase()) &&
-//       (dateFilter ? b.date.startsWith(dateFilter) : true) &&
-//       (masterFilter ? b.master === masterFilter : true) &&
-//       (serviceFilter ? b.service === serviceFilter : true) &&
-//       (statusFilter ? b.status === statusFilter : true)
-//     );
-//   });
-
-//   /* UNIQUE VALUES FOR FILTERS */
-
-//   const masters = [...new Set(bookings.map((b) => b.master))];
-//   const services = [...new Set(bookings.map((b) => b.service))];
-
-//   return (
-//     <div className='space-y-6'>
-//       <h1 className='text-3xl font-semibold'>Dashboard</h1>
-
-//       {/* SEARCH + FILTERS */}
-//       <div className='bg-white p-6 rounded-xl shadow space-y-4'>
-//         {/* SEARCH */}
-//         <input
-//           placeholder='Search by vehicle number...'
-//           className='w-full border-amber-300 p-3 border rounded-lg'
-//           value={search}
-//           onChange={(e) => setSearch(e.target.value)}
-//         />
-
-//         {/* FILTERS */}
-//         <div className='grid grid-cols-2 md:grid-cols-5 gap-3'>
-//           <input
-//             type='date'
-//             className='border p-2 rounded'
-//             value={dateFilter}
-//             onChange={(e) => setDateFilter(e.target.value)}
-//           />
-
-//           <select
-//             className='border p-2 rounded'
-//             value={masterFilter}
-//             onChange={(e) => setMasterFilter(e.target.value)}
-//           >
-//             <option value=''>All mechanics</option>
-//             {masters.map((m) => (
-//               <option key={m}>{m}</option>
-//             ))}
-//           </select>
-
-//           <select
-//             className='border p-2 rounded'
-//             value={serviceFilter}
-//             onChange={(e) => setServiceFilter(e.target.value)}
-//           >
-//             <option value=''>All services</option>
-//             {services.map((s) => (
-//               <option key={s}>{s}</option>
-//             ))}
-//           </select>
-
-//           <select
-//             className='border p-2 rounded'
-//             value={statusFilter}
-//             onChange={(e) => setStatusFilter(e.target.value)}
-//           >
-//             <option value=''>All statuses</option>
-//             <option value='new'>New</option>
-//             <option value='in_progress'>In prograss</option>
-//             <option value='done'>Done</option>
-//           </select>
-
-//           <button
-//             className='bg-gray-200 rounded p-2'
-//             onClick={() => {
-//               setSearch('');
-//               setDateFilter('');
-//               setMasterFilter('');
-//               setServiceFilter('');
-//               setStatusFilter('');
-//             }}
-//           >
-//             Cancel
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* TABLE */}
-//       <div className='bg-white rounded-xl shadow overflow-hidden'>
-//         <table className='w-full text-sm'>
-//           <thead className='bg-gray-100'>
-//             <tr>
-//               <th className='p-3 text-left'>№</th>
-//               <th className='p-3 text-left'>Vehicle number</th>
-//               <th className='p-3 text-left'>Service</th>
-//               <th className='p-3 text-left'>Data & Time</th>
-//               <th className='p-3 text-left'>Mechanic</th>
-//               <th className='p-3 text-left'>Status</th>
-//               <th className='p-3 text-left'>Note</th>
-//               <th className='p-3'></th>
-//             </tr>
-//           </thead>
-
-//           <tbody>
-//             {filtered.map((b) => (
-//               <tr key={b.id} className='border-t'>
-//                 <td className='p-3 font-medium'>{b.id}</td>
-
-//                 <td className='p-3'>{b.carNumber}</td>
-
-//                 <td className='p-3'>{b.service}</td>
-
-//                 <td className='p-3'>{b.date}</td>
-
-//                 <td className='p-3'>{b.master}</td>
-
-//                 <td className='p-3'>
-//                   <StatusBadge status={b.status} />
-//                 </td>
-
-//                 <td className='p-3'>
-//                   <input
-//                     className='border p-1 rounded w-full'
-//                     placeholder='text...'
-//                   />
-//                 </td>
-
-//                 <td className='p-3 flex gap-2'>
-//                   <button className='text-blue-600'>Edit</button>
-//                   <button
-//                     className='text-red-600'
-//                     onClick={() => deleteBooking(b.id)}
-//                   >
-//                     🗑
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function StatusBadge({ status }: { status: Status }) {
-//   const styles = {
-//     new: 'bg-yellow-200 text-yellow-800',
-//     in_progress: 'bg-blue-200 text-blue-800',
-//     done: 'bg-green-200 text-green-800',
-//   };
-
-//   const labels = {
-//     new: 'New',
-//     in_progress: 'Bei der Arbeit',
-//     done: 'Fertig',
-//   };
-
-//   return (
-//     <span className={`px-2 py-1 rounded text-xs ${styles[status]}`}>
-//       {labels[status]}
-//     </span>
-//   );
-// }
-
 'use client';
 
 import { useState } from 'react';
@@ -233,6 +7,10 @@ type Status = 'new' | 'in_progress' | 'done';
 interface Booking {
   id: number;
   carNumber: string;
+  carModel: string;
+  carType: string;
+  address: string;
+  pickupOrDelivery: 'pickup' | 'delivery';
   service: string;
   date: string;
   master: string;
@@ -240,20 +18,27 @@ interface Booking {
   note?: string;
 }
 
-/*MOCK DATA*/
-
 const initialBookings: Booking[] = [
   {
     id: 101,
     carNumber: 'B-AB1234',
+    carModel: 'Toyota Camry',
+    carType: 'Sedan',
+    address: '123 Main St, City',
+    pickupOrDelivery: 'pickup',
     service: 'Oil Change',
     date: '2025-04-25 10:00',
     master: 'Jesse',
     status: 'new',
+    note: 'Customer requested synthetic oil',
   },
   {
     id: 102,
     carNumber: 'HH-XY8899',
+    carModel: 'Honda CR-V',
+    carType: 'SUV',
+    address: '456 Oak Ave, City',
+    pickupOrDelivery: 'delivery',
     service: 'Tires',
     date: '2025-04-25 12:00',
     master: 'Olena',
@@ -262,6 +47,10 @@ const initialBookings: Booking[] = [
   {
     id: 103,
     carNumber: 'M-AA9999',
+    carModel: 'BMW 320i',
+    carType: 'Sedan',
+    address: '789 Pine Rd, City',
+    pickupOrDelivery: 'pickup',
     service: 'Diagnostics',
     date: '2025-04-26 09:00',
     master: 'Murphy',
@@ -278,12 +67,21 @@ export default function Dashboard() {
   const [serviceFilter, setServiceFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  /* DELETE */
+  // ---------- EDIT MODAL ----------
+  const [editBooking, setEditBooking] = useState<Booking | null>(null);
+
+  const saveEdit = () => {
+    if (!editBooking) return;
+    setBookings((prev) =>
+      prev.map((b) => (b.id === editBooking.id ? editBooking : b)),
+    );
+    setEditBooking(null);
+  };
+
   const deleteBooking = (id: number) => {
     setBookings(bookings.filter((b) => b.id !== id));
   };
 
-  /* FILTER LOGIC */
   const filtered = bookings.filter((b) => {
     return (
       b.carNumber.toLowerCase().includes(search.toLowerCase()) &&
@@ -294,7 +92,6 @@ export default function Dashboard() {
     );
   });
 
-  /* UNIQUE VALUES FOR FILTERS */
   const masters = [...new Set(bookings.map((b) => b.master))];
   const services = [...new Set(bookings.map((b) => b.service))];
 
@@ -304,7 +101,6 @@ export default function Dashboard() {
 
       {/* SEARCH + FILTERS */}
       <div className='bg-white p-6 rounded-xl shadow space-y-4'>
-        {/* SEARCH */}
         <input
           placeholder='Search by vehicle number...'
           className='w-full border-amber-300 p-3 border rounded-lg'
@@ -312,7 +108,6 @@ export default function Dashboard() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* FILTERS */}
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3'>
           <input
             type='date'
@@ -376,34 +171,39 @@ export default function Dashboard() {
             <tr>
               <th className='p-3 text-left'>№</th>
               <th className='p-3 text-left'>Vehicle number</th>
+              <th className='p-3 text-left'>Model</th>
+              <th className='p-3 text-left'>Type</th>
               <th className='p-3 text-left'>Service</th>
               <th className='p-3 text-left'>Date & Time</th>
               <th className='p-3 text-left'>Mechanic</th>
-              <th className='p-3 text-left'>Status</th>
+              <th className='p-3 text-left'>Address</th>
+              <th className='p-3 text-left'>Pickup/Delivery</th>
               <th className='p-3 text-left'>Note</th>
               <th className='p-3'></th>
             </tr>
           </thead>
-
           <tbody>
             {filtered.map((b) => (
               <tr key={b.id} className='border-t'>
                 <td className='p-3 font-medium'>{b.id}</td>
                 <td className='p-3'>{b.carNumber}</td>
+                <td className='p-3'>{b.carModel}</td>
+                <td className='p-3'>{b.carType}</td>
                 <td className='p-3'>{b.service}</td>
                 <td className='p-3'>{b.date}</td>
                 <td className='p-3'>{b.master}</td>
+                <td className='p-3'>{b.address}</td>
                 <td className='p-3'>
-                  <StatusBadge status={b.status} />
+                  {b.pickupOrDelivery === 'pickup' ? 'Pickup' : 'Delivery'}
                 </td>
-                <td className='p-3'>
-                  <input
-                    className='border p-1 rounded w-full'
-                    placeholder='text...'
-                  />
-                </td>
+                <td className='p-3'>{b.note || '-'}</td>
                 <td className='p-3 flex gap-2'>
-                  <button className='text-blue-600'>Edit</button>
+                  <button
+                    className='text-blue-600'
+                    onClick={() => setEditBooking(b)}
+                  >
+                    Edit
+                  </button>
                   <button
                     className='text-red-600'
                     onClick={() => deleteBooking(b.id)}
@@ -417,47 +217,112 @@ export default function Dashboard() {
         </table>
       </div>
 
-      {/* MOBILE CARDS */}
-      <div className='md:hidden space-y-4'>
-        {filtered.map((b) => (
-          <div key={b.id} className='bg-white rounded-xl shadow p-4 space-y-3'>
-            <div className='flex justify-between items-center'>
-              <span className='font-semibold text-lg'>{b.carNumber}</span>
-              <StatusBadge status={b.status} />
-            </div>
-
-            <div className='text-sm space-y-1'>
-              <p>
-                <span className='font-medium'>Service:</span> {b.service}
-              </p>
-              <p>
-                <span className='font-medium'>Date:</span> {b.date}
-              </p>
-              <p>
-                <span className='font-medium'>Mechanic:</span> {b.master}
-              </p>
-              <p>
-                <span className='font-medium'>ID:</span> {b.id}
-              </p>
-            </div>
+      {/* EDIT MODAL */}
+      {editBooking && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
+          <div className='bg-white p-6 rounded-xl w-96 space-y-4'>
+            <h3 className='text-lg font-semibold'>Edit Booking</h3>
 
             <input
-              className='border p-2 rounded w-full text-sm'
-              placeholder='Add note...'
+              className='border p-2 rounded w-full'
+              value={editBooking.carNumber}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, carNumber: e.target.value })
+              }
+              placeholder='Vehicle number'
             />
 
-            <div className='flex justify-between pt-2'>
-              <button className='text-blue-600 text-sm'>Edit</button>
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.carModel}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, carModel: e.target.value })
+              }
+              placeholder='Model'
+            />
+
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.carType}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, carType: e.target.value })
+              }
+              placeholder='Type'
+            />
+
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.address}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, address: e.target.value })
+              }
+              placeholder='Address'
+            />
+
+            <select
+              className='border p-2 rounded w-full'
+              value={editBooking.pickupOrDelivery}
+              onChange={(e) =>
+                setEditBooking({
+                  ...editBooking,
+                  pickupOrDelivery: e.target.value as 'pickup' | 'delivery',
+                })
+              }
+            >
+              <option value='pickup'>Pickup</option>
+              <option value='delivery'>Delivery</option>
+            </select>
+
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.service}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, service: e.target.value })
+              }
+              placeholder='Service'
+            />
+
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.date}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, date: e.target.value })
+              }
+              placeholder='Date & Time'
+            />
+
+            <input
+              className='border p-2 rounded w-full'
+              value={editBooking.master}
+              onChange={(e) =>
+                setEditBooking({ ...editBooking, master: e.target.value })
+              }
+              placeholder='Mechanic'
+            />
+
+            {/* Notes are read-only */}
+            <p>
+              <span className='font-medium'>Note:</span>{' '}
+              {editBooking.note || '-'}
+            </p>
+
+            <div className='flex justify-end gap-3'>
               <button
-                className='text-red-600 text-sm'
-                onClick={() => deleteBooking(b.id)}
+                className='px-4 py-2 border rounded'
+                onClick={() => setEditBooking(null)}
               >
-                Delete
+                Cancel
+              </button>
+              <button
+                className='px-4 py-2 bg-blue-600 text-white rounded'
+                onClick={saveEdit}
+              >
+                Save
               </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
