@@ -61,21 +61,21 @@ export default function RootLayout({
 
         <nav className='flex flex-col space-y-3 text-lg'>
           <Link
-            href='/user/dashboard'
+            href='/admin/dashboard'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
           >
             Dashboard
           </Link>
 
           <Link
-            href='/user/bookings'
+            href='/admin/bookings'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
           >
             Booking
           </Link>
 
           <Link
-            href='/user/settings'
+            href='/admin/settings'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
           >
             Settings
@@ -97,7 +97,7 @@ export default function RootLayout({
 
         <nav className='flex flex-col space-y-3 text-lg mt-6'>
           <Link
-            href='/user/dashboard'
+            href='/admin/dashboard'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
             onClick={() => setSidebarOpen(false)}
           >
@@ -105,7 +105,7 @@ export default function RootLayout({
           </Link>
 
           <Link
-            href='/user/bookings'
+            href='/admin/bookings'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
             onClick={() => setSidebarOpen(false)}
           >
@@ -113,7 +113,7 @@ export default function RootLayout({
           </Link>
 
           <Link
-            href='/user/settings'
+            href='/admin/settings'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
             onClick={() => setSidebarOpen(false)}
           >
