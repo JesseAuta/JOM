@@ -51,13 +51,13 @@ export default function BookingPage() {
   const [models, setModels] = useState<CarModel[]>([]);
 
   useEffect(() => {
-    fetch(API + "/api/services").then(r => r.json()).then(setServices).catch(console.error);
-    fetch(API + "/api/cars/brands").then(r => r.json()).then(setBrands).catch(console.error);
+    fetch(API + "/api/services").then(r => r.json()).then(data => setServices(Array.isArray(data) ? data : [])).catch(console.error);
+    fetch(API + "/api/cars/brands").then(r => r.json()).then(data => setBrands(Array.isArray(data) ? data : [])).catch(console.error);
   }, []);
 
   useEffect(() => {
     if (!formData.brandId) return;
-    fetch(API + "/api/cars/models/" + formData.brandId).then(r => r.json()).then(setModels).catch(console.error);
+    fetch(API + "/api/cars/models/" + formData.brandId).then(r => r.json()).then(data => setModels(Array.isArray(data) ? data : [])).catch(console.error);
   }, [formData.brandId]);
 
   const visibleServices = formData.showAllServices ? services : services.slice(0, 6);
