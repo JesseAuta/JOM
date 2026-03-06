@@ -34,7 +34,9 @@ export default function Header() {
             alt="JOM Auto Logo"
             width={140}
             height={30}
-            className="object-contain cursor-pointer text-[#062E52] font-bold text-lg"
+            loading="eager"
+            style={{ height: 'auto' }}
+            className='object-contain cursor-pointer'
           />
         </Link>
 

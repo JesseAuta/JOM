@@ -147,19 +147,19 @@ export default function BookingPage() {
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.08)]">
         <div className="px-8 pt-10 pb-14 md:px-16">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#1a2b4a] mb-3">Book an Appointment</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-blue-500 mb-3">Book an Appointment</h1>
           <p className="text-base text-gray-500 leading-relaxed mb-10">Use our simple booking assistant to schedule your service appointment.</p>
 
-          <div className="flex items-start mb-12 overflow-x-auto pb-1">
+          <div className="flex items-center mb-12 w-full">
             {steps.map((step, i) => (
-              <div key={step.number} className="flex items-center flex-1 min-w-0">
-                {i > 0 && <div className={"h-[3px] flex-1 rounded-full mt-4 min-w-[12px] transition-all duration-300 " + (currentStep > i ? "bg-[#F5C518]" : "bg-gray-200")} />}
-                <div className="flex flex-col items-center gap-1.5 flex-shrink-0"
+              <div key={step.number} className="flex items-center" style={{flex: i < steps.length - 1 ? "1" : "0"}}>
+                <div className="flex flex-col items-center flex-shrink-0"
                   onClick={() => { if (step.number < currentStep) setCurrentStep(step.number); }}
                   style={{ cursor: step.number < currentStep ? "pointer" : "default" }}>
                   <div className={"w-10 h-10 rounded-full flex items-center justify-center font-bold text-base transition-all duration-300 " + (currentStep === step.number ? "bg-[#F5C518] text-[#1a2b4a] ring-4 ring-yellow-200" : currentStep > step.number ? "bg-[#F5C518] text-[#1a2b4a]" : "bg-gray-200 text-gray-400")}>{step.number}</div>
-                  <span className={"text-xs font-semibold text-center whitespace-nowrap max-w-[88px] leading-tight " + (currentStep === step.number ? "text-[#F5C518]" : currentStep > step.number ? "text-[#1a2b4a]" : "text-gray-400")}>{step.label}</span>
+                  <span className={"text-xs font-semibold text-center whitespace-nowrap mt-1 " + (currentStep === step.number ? "text-[#F5C518]" : currentStep > step.number ? "text-[#1a2b4a]" : "text-gray-400")}>{step.label}</span>
                 </div>
+                {i < steps.length - 1 && <div className={"h-[3px] flex-1 mx-2 rounded-full transition-all duration-300 " + (currentStep > i + 1 ? "bg-[#F5C518]" : "bg-gray-200")} />}
               </div>
             ))}
           </div>
@@ -173,7 +173,7 @@ export default function BookingPage() {
                   <div className="border border-gray-200 rounded-xl overflow-hidden">
                     {visibleServices.map(s => (
                       <button key={s.id} onClick={() => { update("serviceId", s.id); update("serviceName", s.name); }}
-                        className={"flex items-center w-full px-6 py-5 gap-4 border-b border-gray-100 text-left transition-all duration-200 last:border-b-0 " + (formData.serviceId === s.id ? "bg-yellow-50 border-l-4 border-l-[#F5C518]" : "bg-white hover:bg-gray-50")}>
+                        className={"flex items-center w-full px-6 py-5 gap-4 border-b border-gray-100 text-left transition-all duration-200 last:border-b-0 " + (formData.serviceId === s.id ? "bg-yellow-50 border-l-4 border-l-[#F5C518] animate-pulse" : "bg-white hover:bg-gray-50")}>
                         <span className="text-2xl w-8 text-center">{serviceIcons[s.name] || "🔧"}</span>
                         <span className="flex-1 text-base font-semibold text-[#1a2b4a]">{s.name}</span>
                         <span className="text-sm text-gray-400 font-medium">€{s.price}</span>
@@ -184,7 +184,7 @@ export default function BookingPage() {
                       <button onClick={() => update("showAllServices", true)}
                         className="flex items-center w-full px-6 py-5 gap-4 bg-white hover:bg-gray-50 transition-all">
                         <span className="text-xl w-7 text-center text-gray-400">···</span>
-                        <span className="flex-1 text-sm font-semibold text-gray-500">Show more services</span>
+                        <span className="flex-1 text-sm font-semibold text-blue-500">Show more services</span>
                       </button>
                     )}
                   </div>
@@ -199,7 +199,7 @@ export default function BookingPage() {
               <div className="flex flex-col gap-4">
                 <div>
                   <select value={formData.brandId ?? ""} className={inputClass(errors.brand)}
-                    onChange={e => { const b = brands.find(x => x.id === Number(e.target.value)); update("brandId", Number(e.target.value)); update("brandName", b?.name || ""); update("modelId", null); update("modelName", ""); }}>
+                    onChange={e => { const val = Number(e.target.value); const b = brands.find(x => x.id === val); update("brandId", val || null); update("brandName", b?.name || ""); update("modelId", null); update("modelName", ""); setModels([]); }}>
                     <option value="">Car Brand</option>
                     {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                   </select>
@@ -274,14 +274,14 @@ export default function BookingPage() {
                 <div>
                   <p className="text-sm font-bold text-[#1a2b4a] mb-3">Pick-up or Home Delivery*</p>
                   <div className="grid grid-cols-2 gap-4">
-                    <button type="button" onClick={() => update("deliveryOption", "pickup")}
+                    <button type="button" onClick={() => update("deliveryOption", formData.deliveryOption === "pickup" ? "" : "pickup")}
                       className={"flex flex-col items-center gap-2 py-5 px-4 rounded-xl border-2 transition-all duration-200 " + (formData.deliveryOption === "pickup" ? "border-[#F5C518] bg-yellow-50" : "border-gray-200 bg-white hover:bg-gray-50")}>
                       <span className="text-3xl">🏪</span>
                       <span className={"text-sm font-bold " + (formData.deliveryOption === "pickup" ? "text-[#1a2b4a]" : "text-gray-500")}>Self Drop-off</span>
                       <span className="text-xs text-gray-400 text-center leading-tight">Drop your car at our shop</span>
                       {formData.deliveryOption === "pickup" && <span className="text-[#F5C518] font-bold text-lg">✓</span>}
                     </button>
-                    <button type="button" onClick={() => update("deliveryOption", "delivery")}
+                    <button type="button" onClick={() => update("deliveryOption", formData.deliveryOption === "delivery" ? "" : "delivery")}
                       className={"flex flex-col items-center gap-2 py-5 px-4 rounded-xl border-2 transition-all duration-200 " + (formData.deliveryOption === "delivery" ? "border-[#F5C518] bg-yellow-50" : "border-gray-200 bg-white hover:bg-gray-50")}>
                       <span className="text-3xl">🚚</span>
                       <span className={"text-sm font-bold " + (formData.deliveryOption === "delivery" ? "text-[#1a2b4a]" : "text-gray-500")}>Home Delivery</span>
