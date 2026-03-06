@@ -15,7 +15,10 @@ export default function Login() {
     setError('');
 
     try {
-      await axios.post('/api/admin/login', { email, password });
+      await axios.post('http://localhost:3000/admin/login', {
+        email,
+        password,
+      });
       window.location.href = '/admin/dashboard';
     } catch (err: any) {
       setError(err.response?.data || 'Login error');
