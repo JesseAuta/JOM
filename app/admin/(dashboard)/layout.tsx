@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { useRouter } from 'next/navigation';
+import { HiMenu, HiOutlineLogout, HiX } from 'react-icons/hi';
+import axios from 'axios';
 
 export default function RootLayout({
   children,
@@ -10,12 +12,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/logout`,
+        {},
+        { withCredentials: true },
+      );
+
+      router.push('/admin/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <section className='min-h-screen flex'>
       {/* DESKTOP SIDEBAR */}
-      <aside className='hidden md:flex w-64 bg-[#062E52] text-white flex-col p-6 space-y-6'>
-        <h2 className='text-2xl font-bold'>JOM Auto</h2>
+      <aside className='hidden md:flex w-64 bg-[#062E52] text-white flex-col p-6'>
+        <h2 className='text-2xl font-bold mb-6'>JOM Auto</h2>
 
         <nav className='flex flex-col space-y-3 text-lg'>
           <Link
@@ -33,17 +50,33 @@ export default function RootLayout({
           </Link>
 
           <Link
-            href='/admin/settings'
+            href='/admin/services'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
           >
-            Settings
+            Services
+          </Link>
+
+          <Link
+            href='/admin/mechanics'
+            className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
+          >
+            Mechanics
           </Link>
         </nav>
+
+        {/* LOGOUT BUTTON */}
+        <button
+          onClick={handleLogout}
+          className='mt-auto flex items-center justify-center gap-2 w-full border border-yellow-400 text-yellow-400 hover:bg-yellow-500 hover:text-white px-4 py-3 rounded-xl font-medium transition duration-200'
+        >
+          <HiOutlineLogout size={20} />
+          Logout
+        </button>
       </aside>
 
       {/* MOBILE SIDEBAR */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[#062E52] text-white p-6 space-y-6 transform transition-transform duration-300 z-50
+        className={`fixed top-0 left-0 h-full w-64 bg-[#062E52] text-white p-6 flex flex-col transform transition-transform duration-300 z-50
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden`}
       >
         <div className='flex justify-between items-center'>
@@ -52,7 +85,6 @@ export default function RootLayout({
             <HiX size={28} />
           </button>
         </div>
-
         <nav className='flex flex-col space-y-3 text-lg mt-6'>
           <Link
             href='/admin/dashboard'
@@ -71,13 +103,28 @@ export default function RootLayout({
           </Link>
 
           <Link
-            href='/admin/settings'
+            href='/admin/services'
             className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
             onClick={() => setSidebarOpen(false)}
           >
-            Settings
+            Services
+          </Link>
+          <Link
+            href='/admin/mechanics'
+            className='hover:bg-[#FACF04] rounded-lg px-3 py-2 transition'
+            onClick={() => setSidebarOpen(false)}
+          >
+            Mechanics
           </Link>
         </nav>
+
+        <button
+          onClick={handleLogout}
+          className='mt-auto flex items-center justify-center gap-2 w-full border border-yellow-400 text-yellow-400 hover:bg-yellow-500 hover:text-white px-4 py-3 rounded-xl font-medium transition duration-200'
+        >
+          <HiOutlineLogout size={20} />
+          Logout
+        </button>
       </div>
 
       {/* MOBILE TOGGLE BUTTON */}
