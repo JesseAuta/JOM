@@ -11,17 +11,24 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('EMAIL STATE:', email, 'PASSWORD STATE:', password);
     setLoading(true);
     setError('');
 
     try {
-      await axios.post('http://localhost:3000/admin/login', {
-        email,
-        password,
-      });
+      await axios.post(
+        'http://localhost:8000/admin/login',
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        },
+      );
       window.location.href = '/admin/dashboard';
     } catch (err: any) {
-      setError(err.response?.data || 'Login error');
+      setError(err.response?.data?.message || 'Login error');
     } finally {
       setLoading(false);
     }
@@ -51,7 +58,7 @@ export default function Login() {
               <input
                 type='email'
                 required
-                placeholder='admin@jom-auto.de'
+                placeholder='example@test.de'
                 className='w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
