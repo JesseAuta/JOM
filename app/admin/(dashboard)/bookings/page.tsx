@@ -413,7 +413,7 @@ export default function BookingPage() {
           )}
 
           {blocks.length > 0 && (
-            <div className='space-y-3 text-sm max-h-[500px] overflow-y-auto'>
+            <div className='space-y-3 text-sm max-h-\[500px\] overflow-y-auto'>
               {blocks.map((block, index) => (
                 <div key={index} className='border rounded p-3 bg-gray-50'>
                   <p className='font-medium'>{block.date}</p>
