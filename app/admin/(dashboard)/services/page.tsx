@@ -6,6 +6,7 @@ import axios from 'axios';
 interface Service {
   id: number;
   name: string;
+  description: string;
   price: number;
   mechanicIds: number[];
   icon?: string;
@@ -28,6 +29,7 @@ export default function ServicesPage() {
   const [newService, setNewService] = useState<Service>({
     id: 0,
     name: '',
+    description: '',
     price: 0,
     mechanicIds: [],
     icon: '',
@@ -150,7 +152,7 @@ export default function ServicesPage() {
         <div className='flex gap-2 items-end'>
           <input
             placeholder='Icon'
-            className='border px-2 py-1 rounded w-16'
+            className='border px-2 py-1 rounded w-full md:w-16'
             value={newService.icon}
             onChange={(e) =>
               setNewService({ ...newService, icon: e.target.value })
@@ -158,7 +160,7 @@ export default function ServicesPage() {
           />
           <input
             placeholder='Name'
-            className='border px-2 py-1 rounded w-32'
+            className='border px-2 py-1 rounded w-full'
             value={newService.name}
             onChange={(e) =>
               setNewService({ ...newService, name: e.target.value })
@@ -167,7 +169,7 @@ export default function ServicesPage() {
           <input
             placeholder='Price'
             type='number'
-            className='border px-2 py-1 rounded w-20'
+            className='border px-2 py-1 rounded w-full'
             value={newService.price}
             onChange={(e) =>
               setNewService({ ...newService, price: +e.target.value })
@@ -176,7 +178,7 @@ export default function ServicesPage() {
           <div className='relative'>
             <button
               type='button'
-              className='border px-2 py-1 rounded w-52 flex justify-between'
+              className='border px-2 py-1 rounded w-full flex justify-between'
               onClick={() => setAddDropdownOpen(!addDropdownOpen)}
             >
               {newService.mechanicIds.length
@@ -190,7 +192,7 @@ export default function ServicesPage() {
               <span>▼</span>
             </button>
             {addDropdownOpen && (
-              <div className='absolute bg-white border mt-1 rounded shadow w-52 max-h-40 overflow-auto z-10'>
+              <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-40 overflow-auto z-10'>
                 {mechanics.map((m) => (
                   <div
                     key={m.id}
@@ -232,12 +234,13 @@ export default function ServicesPage() {
         {services.slice(0, visibleCount).map((s) => (
           <div
             key={s.id}
-            className='flex items-center justify-between bg-white p-3 rounded shadow-sm'
+            className='flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-3 rounded shadow-sm gap-2'
           >
             <div>
               <p className='text-xl'>
                 {s.icon || '🔧'} {s.name}
               </p>
+              <p className='text-gray-600'>{s.description}</p>
               <p>Price: ${s.price}</p>
               <p>Description: {s.description || '-'}</p>
               <p>
@@ -280,8 +283,8 @@ export default function ServicesPage() {
 
       {/* Edit Modal */}
       {editService && (
-        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
-          <div className='bg-white p-6 rounded-xl w-96 space-y-4'>
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white p-6 rounded-xl w-full max-w-md space-y-4'>
             <h3 className='text-lg font-semibold'>Edit Service</h3>
             <input
               placeholder='Icon'

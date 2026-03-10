@@ -7,13 +7,26 @@ interface Mechanic {
   name: string;
   surname: string;
   phone: string;
-  services?: string[]; // optional if you want to show assigned services
+  specialization: string;
+  services?: string[];
 }
 
 export default function MechanicsPage() {
   const [mechanics, setMechanics] = useState<Mechanic[]>([
-    { id: 1, name: 'John', surname: 'Doe', phone: '123456789' },
-    { id: 2, name: 'Jane', surname: 'Smith', phone: '987654321' },
+    {
+      id: 1,
+      name: 'John',
+      surname: 'Doe',
+      phone: '+49 123 4567890',
+      specialization: 'Engine',
+    },
+    {
+      id: 2,
+      name: 'Jane',
+      surname: 'Smith',
+      phone: '+49 987 6543210',
+      specialization: 'Tires',
+    },
   ]);
 
   const [editMechanic, setEditMechanic] = useState<Mechanic | null>(null);
@@ -21,12 +34,33 @@ export default function MechanicsPage() {
     name: '',
     surname: '',
     phone: '',
+    specialization: '',
   });
+
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  const formatGermanPhone = (value: string) => {
+    // Remove non-digit characters
+    const digits = value.replace(/\D/g, '');
+    // Format as +49 XXX XXXXXX
+    if (digits.startsWith('49')) {
+      return (
+        '+' +
+        digits.slice(0, 2) +
+        ' ' +
+        digits.slice(2, 5) +
+        ' ' +
+        digits.slice(5, 12)
+      );
+    } else {
+      return '+49 ' + digits.slice(0, 3) + ' ' + digits.slice(3, 10);
+    }
+  };
 
   const addMechanic = () => {
     const id = Date.now();
     setMechanics([...mechanics, { id, ...newMechanic }]);
-    setNewMechanic({ name: '', surname: '', phone: '' });
+    setNewMechanic({ name: '', surname: '', phone: '', specialization: '' });
   };
 
   const saveMechanic = () => {
@@ -40,32 +74,90 @@ export default function MechanicsPage() {
   const deleteMechanic = (id: number) => {
     const mechanic = mechanics.find((m) => m.id === id);
     if (!mechanic) return;
-
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete mechanic ${mechanic.name} ${mechanic.surname}?`,
-    );
-
-    if (confirmDelete) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete mechanic ${mechanic.name} ${mechanic.surname}?`,
+      )
+    ) {
       setMechanics((prev) => prev.filter((m) => m.id !== id));
     }
   };
 
+  const isAddDisabled =
+    !newMechanic.name ||
+    !newMechanic.surname ||
+    !newMechanic.phone ||
+    !newMechanic.specialization;
+
+  const isEditDisabled =
+    !editMechanic?.name ||
+    !editMechanic?.surname ||
+    !editMechanic?.phone ||
+    !editMechanic?.specialization;
+
   return (
-    <div className='p-6 space-y-6 bg-gray-50 min-h-screen'>
+    <div className='p-4 md:p-6 space-y-6 bg-gray-50 min-h-screen'>
       <h1 className='text-3xl font-bold'>Mechanics</h1>
 
-      {/* Mechanics List */}
+      {/* ===== Add new mechanic (moved to top) ===== */}
+      <div className='flex flex-col md:flex-row gap-2 md:gap-2 flex-wrap'>
+        <input
+          placeholder='Name *'
+          className='border px-2 py-1 rounded w-full md:w-auto'
+          value={newMechanic.name}
+          onChange={(e) =>
+            setNewMechanic({ ...newMechanic, name: e.target.value })
+          }
+        />
+        <input
+          placeholder='Surname *'
+          className='border px-2 py-1 rounded w-full md:w-auto'
+          value={newMechanic.surname}
+          onChange={(e) =>
+            setNewMechanic({ ...newMechanic, surname: e.target.value })
+          }
+        />
+        <input
+          placeholder='Phone *'
+          className='border px-2 py-1 rounded w-full md:w-auto'
+          value={newMechanic.phone}
+          onChange={(e) =>
+            setNewMechanic({
+              ...newMechanic,
+              phone: formatGermanPhone(e.target.value),
+            })
+          }
+        />
+        <input
+          placeholder='Specialization *'
+          className='border px-2 py-1 rounded w-full md:w-auto'
+          value={newMechanic.specialization}
+          onChange={(e) =>
+            setNewMechanic({ ...newMechanic, specialization: e.target.value })
+          }
+        />
+        <button
+          className={`px-3 py-1 rounded text-white ${isAddDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
+          onClick={addMechanic}
+          disabled={isAddDisabled}
+        >
+          Add
+        </button>
+      </div>
+
+      {/* ===== Mechanics List ===== */}
       <div className='space-y-2'>
-        {mechanics.map((m) => (
+        {mechanics.slice(0, visibleCount).map((m) => (
           <div
             key={m.id}
-            className='flex items-center justify-between bg-white p-3 rounded shadow-sm'
+            className='flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-3 rounded shadow-sm gap-2'
           >
             <div>
               <p className='font-bold'>
                 {m.name} {m.surname}
               </p>
               <p>Phone: {m.phone}</p>
+              <p>Specialization: {m.specialization}</p>
             </div>
             <div className='flex gap-2'>
               <button
@@ -83,53 +175,23 @@ export default function MechanicsPage() {
             </div>
           </div>
         ))}
+
+        {visibleCount < mechanics.length && (
+          <div className='flex justify-center mt-4'>
+            <button
+              className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
+              onClick={() => setVisibleCount((prev) => prev + 5)}
+            >
+              Show More
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Add new mechanic */}
-      <div className='flex gap-2 mt-4'>
-        <input
-          placeholder='Name'
-          className='border px-2 py-1 rounded'
-          value={newMechanic.name}
-          onChange={(e) =>
-            setNewMechanic({ ...newMechanic, name: e.target.value })
-          }
-        />
-        <input
-          placeholder='Surname'
-          className='border px-2 py-1 rounded'
-          value={newMechanic.surname}
-          onChange={(e) =>
-            setNewMechanic({ ...newMechanic, surname: e.target.value })
-          }
-        />
-        <input
-          placeholder='Phone'
-          className='border px-2 py-1 rounded'
-          value={newMechanic.phone}
-          onChange={(e) =>
-            setNewMechanic({ ...newMechanic, phone: e.target.value })
-          }
-        />
-        <button
-          className={`px-3 py-1 rounded text-white ${
-            newMechanic.name && newMechanic.surname && newMechanic.phone
-              ? 'bg-green-500 hover:bg-green-600'
-              : 'bg-gray-400 cursor-not-allowed'
-          }`}
-          onClick={addMechanic}
-          disabled={
-            !newMechanic.name || !newMechanic.surname || !newMechanic.phone
-          }
-        >
-          Add
-        </button>
-      </div>
-
-      {/* Edit Modal */}
+      {/* ===== Edit Modal ===== */}
       {editMechanic && (
-        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
-          <div className='bg-white p-6 rounded-xl w-96 space-y-4'>
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white p-6 rounded-xl w-full max-w-md space-y-4'>
             <h3 className='text-lg font-semibold'>Edit Mechanic</h3>
             <input
               className='border p-2 rounded w-full'
@@ -137,6 +199,7 @@ export default function MechanicsPage() {
               onChange={(e) =>
                 setEditMechanic({ ...editMechanic, name: e.target.value })
               }
+              placeholder='Name *'
             />
             <input
               className='border p-2 rounded w-full'
@@ -144,13 +207,29 @@ export default function MechanicsPage() {
               onChange={(e) =>
                 setEditMechanic({ ...editMechanic, surname: e.target.value })
               }
+              placeholder='Surname *'
             />
             <input
               className='border p-2 rounded w-full'
               value={editMechanic.phone}
               onChange={(e) =>
-                setEditMechanic({ ...editMechanic, phone: e.target.value })
+                setEditMechanic({
+                  ...editMechanic,
+                  phone: formatGermanPhone(e.target.value),
+                })
               }
+              placeholder='Phone *'
+            />
+            <input
+              className='border p-2 rounded w-full'
+              value={editMechanic.specialization}
+              onChange={(e) =>
+                setEditMechanic({
+                  ...editMechanic,
+                  specialization: e.target.value,
+                })
+              }
+              placeholder='Specialization *'
             />
             <div className='flex justify-end gap-3'>
               <button
@@ -160,8 +239,9 @@ export default function MechanicsPage() {
                 Cancel
               </button>
               <button
-                className='px-4 py-2 bg-blue-600 text-white rounded'
+                className={`px-4 py-2 rounded text-white ${isEditDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                 onClick={saveMechanic}
+                disabled={isEditDisabled}
               >
                 Save
               </button>
