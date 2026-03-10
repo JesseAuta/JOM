@@ -5,6 +5,7 @@ import { useState } from 'react';
 interface Service {
   id: number;
   name: string;
+  description: string;
   price: number;
   mechanicIds: number[];
   icon?: string;
@@ -23,30 +24,45 @@ export default function ServicesPage() {
   ]);
 
   const [services, setServices] = useState<Service[]>([
-    { id: 1, name: 'Oil Change', price: 50, mechanicIds: [1], icon: '🛢️' },
+    {
+      id: 1,
+      name: 'Oil Change',
+      description: 'Replace engine oil and filter',
+      price: 50,
+      mechanicIds: [1],
+      icon: '🛢️',
+    },
     {
       id: 2,
       name: 'Tire Replacement',
+      description: 'Replace worn tires',
       price: 100,
       mechanicIds: [2],
       icon: '🛞',
     },
-    // Add more if needed
+    // Add more services as needed
   ]);
 
   const [newService, setNewService] = useState<Service>({
     id: 0,
     name: '',
+    description: '',
     price: 0,
     mechanicIds: [],
     icon: '',
   });
 
   const [editService, setEditService] = useState<Service | null>(null);
-
-  // ✅ Separate dropdown states
   const [addDropdownOpen, setAddDropdownOpen] = useState(false);
   const [editDropdownOpen, setEditDropdownOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  // Auto-resize textarea helper
+  const autoResizeTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  };
 
   const addService = () => {
     if (
@@ -57,7 +73,14 @@ export default function ServicesPage() {
       return;
     const id = Date.now();
     setServices([...services, { ...newService, id }]);
-    setNewService({ id: 0, name: '', price: 0, mechanicIds: [], icon: '' });
+    setNewService({
+      id: 0,
+      name: '',
+      description: '',
+      price: 0,
+      mechanicIds: [],
+      icon: '',
+    });
   };
 
   const deleteService = (id: number) => {
@@ -85,43 +108,59 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className='p-6 space-y-6 bg-gray-50 min-h-screen'>
+    <div className='p-4 md:p-6 space-y-6 bg-gray-50 min-h-screen'>
       <h1 className='text-3xl font-bold'>Services</h1>
 
       {/* ===== Add / New Service Inputs ===== */}
-      <div className='flex gap-2 mt-4 items-end'>
-        <div className='flex flex-col'>
+      <div className='flex flex-col md:flex-row gap-4 md:gap-2 items-end flex-wrap'>
+        <div className='flex flex-col w-full md:w-auto'>
           <label className='text-gray-500 text-sm'>Icon</label>
           <input
             placeholder='Icon'
-            className='border px-2 py-1 rounded w-16'
+            className='border px-2 py-1 rounded w-full md:w-16'
             value={newService.icon}
             onChange={(e) =>
               setNewService({ ...newService, icon: e.target.value })
             }
           />
         </div>
-        <div className='flex flex-col'>
+
+        <div className='flex flex-col w-full md:w-32'>
           <label className='text-gray-500 text-sm'>
             Name <span className='text-red-500'>*</span>
           </label>
           <input
             placeholder='Name'
-            className='border px-2 py-1 rounded w-32'
+            className='border px-2 py-1 rounded w-full'
             value={newService.name}
             onChange={(e) =>
               setNewService({ ...newService, name: e.target.value })
             }
           />
         </div>
-        <div className='flex flex-col'>
+
+        <div className='flex flex-col w-full md:w-64'>
+          <label className='text-gray-500 text-sm'>Description</label>
+          <textarea
+            rows={1}
+            className='border px-2 py-1 rounded w-full resize-none overflow-hidden'
+            placeholder='Description'
+            value={newService.description}
+            onChange={(e) => {
+              setNewService({ ...newService, description: e.target.value });
+              autoResizeTextarea(e);
+            }}
+          />
+        </div>
+
+        <div className='flex flex-col w-full md:w-20'>
           <label className='text-gray-500 text-sm'>
             Price <span className='text-red-500'>*</span>
           </label>
           <input
             placeholder='Price'
             type='number'
-            className='border px-2 py-1 rounded w-20'
+            className='border px-2 py-1 rounded w-full'
             value={newService.price}
             onChange={(e) =>
               setNewService({ ...newService, price: +e.target.value })
@@ -129,14 +168,14 @@ export default function ServicesPage() {
           />
         </div>
 
-        <div className='flex flex-col'>
+        <div className='flex flex-col w-full md:w-52'>
           <label className='text-gray-500 text-sm'>
             Mechanic <span className='text-red-500'>*</span>
           </label>
           <div className='relative'>
             <button
               type='button'
-              className='border px-2 py-1 rounded w-52 flex justify-between'
+              className='border px-2 py-1 rounded w-full flex justify-between'
               onClick={() => setAddDropdownOpen(!addDropdownOpen)}
             >
               {newService.mechanicIds.length
@@ -150,14 +189,14 @@ export default function ServicesPage() {
               <span>▼</span>
             </button>
             {addDropdownOpen && (
-              <div className='absolute bg-white border mt-1 rounded shadow w-52 max-h-40 overflow-auto z-10'>
+              <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-40 overflow-auto z-10'>
                 {mechanics.map((m) => (
                   <div
                     key={m.id}
                     className='px-2 py-1 hover:bg-gray-100 cursor-pointer'
                     onClick={() => {
                       setNewService({ ...newService, mechanicIds: [m.id] });
-                      setAddDropdownOpen(false); // closes after selection
+                      setAddDropdownOpen(false);
                     }}
                   >
                     {m.name} {m.surname}
@@ -187,17 +226,18 @@ export default function ServicesPage() {
         </button>
       </div>
 
-      {/* ===== Services List (first 5) ===== */}
+      {/* ===== Services List ===== */}
       <div className='space-y-2 mt-4'>
-        {services.slice(0, 5).map((s) => (
+        {services.slice(0, visibleCount).map((s) => (
           <div
             key={s.id}
-            className='flex items-center justify-between bg-white p-3 rounded shadow-sm'
+            className='flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-3 rounded shadow-sm gap-2'
           >
             <div>
               <p className='text-xl'>
                 {s.icon || '🔧'} {s.name}
               </p>
+              <p className='text-gray-600'>{s.description}</p>
               <p>Price: ${s.price}</p>
               <p>
                 Mechanic:{' '}
@@ -225,12 +265,23 @@ export default function ServicesPage() {
             </div>
           </div>
         ))}
+
+        {visibleCount < services.length && (
+          <div className='flex justify-center mt-4'>
+            <button
+              className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
+              onClick={() => setVisibleCount((prev) => prev + 5)}
+            >
+              Show More
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ===== Edit Service Modal ===== */}
       {editService && (
-        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50'>
-          <div className='bg-white p-6 rounded-xl w-96 space-y-4'>
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white p-6 rounded-xl w-full max-w-md space-y-4'>
             <h3 className='text-lg font-semibold'>Edit Service</h3>
 
             <div className='flex flex-col'>
@@ -254,6 +305,23 @@ export default function ServicesPage() {
                 onChange={(e) =>
                   setEditService({ ...editService, name: e.target.value })
                 }
+              />
+            </div>
+
+            <div className='flex flex-col'>
+              <label className='text-gray-500 text-sm'>Description</label>
+              <textarea
+                rows={1}
+                className='border p-2 rounded w-full resize-none overflow-hidden'
+                placeholder='Description'
+                value={editService.description}
+                onChange={(e) => {
+                  setEditService({
+                    ...editService,
+                    description: e.target.value,
+                  });
+                  autoResizeTextarea(e);
+                }}
               />
             </div>
 
@@ -288,7 +356,6 @@ export default function ServicesPage() {
                     : 'Select Mechanic'}
                   <span>▼</span>
                 </button>
-
                 {editDropdownOpen && (
                   <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-40 overflow-auto z-10'>
                     {mechanics.map((m) => (
@@ -300,7 +367,7 @@ export default function ServicesPage() {
                             ...editService,
                             mechanicIds: [m.id],
                           });
-                          setEditDropdownOpen(false); // closes after selection
+                          setEditDropdownOpen(false);
                         }}
                       >
                         {m.name} {m.surname}
