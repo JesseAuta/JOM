@@ -6,7 +6,6 @@ import axios from 'axios';
 interface Service {
   id: number;
   name: string;
-  description: string;
   price: number;
   mechanicIds: number[];
   icon?: string;
@@ -15,21 +14,16 @@ interface Service {
 
 interface Mechanic {
   id: number;
-  name: string;
-  surname: string;
+  first_name: string;
+  last_name: string;
 }
 
 export default function ServicesPage() {
-  const [mechanics] = useState<Mechanic[]>([
-    { id: 1, name: 'John', surname: 'Doe' },
-    { id: 2, name: 'Jane', surname: 'Smith' },
-  ]);
-
+  const [mechanics, setMechanics] = useState<Mechanic[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [newService, setNewService] = useState<Service>({
     id: 0,
     name: '',
-    description: '',
     price: 0,
     mechanicIds: [],
     icon: '',
@@ -44,24 +38,35 @@ export default function ServicesPage() {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Fetch services from backend
+  // Fetch mechanics
+  const fetchMechanics = async () => {
+    try {
+      const res = await axios.get('http://localhost:8000/api/mechanics');
+      setMechanics(res.data);
+    } catch (err) {
+      console.error('Error fetching mechanics', err);
+    }
+  };
+
+  // Fetch services
+  const fetchServices = async () => {
+    try {
+      const res = await axios.get<Service[]>(
+        'http://localhost:8000/api/services',
+      );
+      setServices(
+        res.data.map((s) => ({ ...s, mechanicIds: s.mechanicIds || [] })),
+      );
+    } catch (err) {
+      console.error('Error fetching services', err);
+    }
+  };
+
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await axios.get<Service[]>(
-          'http://localhost:8000/api/services',
-        );
-        setServices(
-          res.data.map((s) => ({ ...s, mechanicIds: s.mechanicIds || [] })),
-        );
-      } catch (err) {
-        console.error('Error fetching services', err);
-      }
-    };
+    fetchMechanics();
     fetchServices();
   }, []);
 
-  // Auto resize textarea
   const resizeTextarea = (el: HTMLTextAreaElement | null) => {
     if (el) {
       el.style.height = 'auto';
@@ -69,7 +74,7 @@ export default function ServicesPage() {
     }
   };
 
-  // Add new service
+  // Add service
   const addServiceHandler = async () => {
     if (
       !newService.name ||
@@ -78,10 +83,12 @@ export default function ServicesPage() {
       !newService.description
     )
       return;
+
     try {
+      const payload = { ...newService };
       const res = await axios.post<Service>(
         'http://localhost:8000/api/services',
-        newService,
+        payload,
       );
       setServices([
         ...services,
@@ -100,7 +107,32 @@ export default function ServicesPage() {
     }
   };
 
-  // Delete service
+  // Edit service
+  const saveServiceHandler = async () => {
+    if (
+      !editService ||
+      !editService.name ||
+      editService.price <= 0 ||
+      editService.mechanicIds.length === 0 ||
+      !editService.description
+    )
+      return;
+
+    try {
+      const payload = { ...editService };
+      await axios.put(
+        `http://localhost:8000/api/services/${editService.id}`,
+        payload,
+      );
+      setServices((prev) =>
+        prev.map((s) => (s.id === editService.id ? { ...editService } : s)),
+      );
+      setEditService(null);
+    } catch (err) {
+      console.error('Error updating service', err);
+    }
+  };
+
   const deleteServiceHandler = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
@@ -111,32 +143,6 @@ export default function ServicesPage() {
     }
   };
 
-  // Save edited service
-  const saveServiceHandler = async () => {
-    if (
-      !editService ||
-      !editService.name ||
-      editService.price <= 0 ||
-      editService.mechanicIds.length === 0 ||
-      !editService.description
-    )
-      return;
-    try {
-      await axios.put(
-        `http://localhost:8000/api/services/${editService.id}`,
-        editService,
-      );
-
-      // Update state using the edited service (since backend returns 204)
-      setServices((prev) =>
-        prev.map((s) => (s.id === editService.id ? editService : s)),
-      );
-
-      setEditService(null);
-    } catch (err) {
-      console.error('Error updating service', err);
-    }
-  };
   const canAdd =
     newService.name &&
     newService.price > 0 &&
@@ -152,7 +158,7 @@ export default function ServicesPage() {
         <div className='flex gap-2 items-end'>
           <input
             placeholder='Icon'
-            className='border px-2 py-1 rounded w-full md:w-16'
+            className='border px-2 py-1 rounded w-16'
             value={newService.icon}
             onChange={(e) =>
               setNewService({ ...newService, icon: e.target.value })
@@ -160,7 +166,7 @@ export default function ServicesPage() {
           />
           <input
             placeholder='Name'
-            className='border px-2 py-1 rounded w-full'
+            className='border px-2 py-1 rounded w-32' // smaller name input
             value={newService.name}
             onChange={(e) =>
               setNewService({ ...newService, name: e.target.value })
@@ -169,13 +175,19 @@ export default function ServicesPage() {
           <input
             placeholder='Price'
             type='number'
-            className='border px-2 py-1 rounded w-full'
+            min={10}
+            className='border px-2 py-1 rounded w-24'
             value={newService.price}
             onChange={(e) =>
-              setNewService({ ...newService, price: +e.target.value })
+              setNewService({
+                ...newService,
+                price: Math.max(0, +e.target.value),
+              })
             }
           />
-          <div className='relative'>
+          <div className='relative w-48'>
+            {' '}
+            {/* wider dropdown */}
             <button
               type='button'
               className='border px-2 py-1 rounded w-full flex justify-between'
@@ -185,24 +197,24 @@ export default function ServicesPage() {
                 ? newService.mechanicIds
                     .map((id) => {
                       const m = mechanics.find((mech) => mech.id === id);
-                      return m ? `${m.name} ${m.surname}` : '';
+                      return m ? `${m.first_name} ${m.last_name}` : 'Unknown';
                     })
                     .join(', ')
                 : 'Select Mechanic'}
               <span>▼</span>
             </button>
             {addDropdownOpen && (
-              <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-40 overflow-auto z-10'>
+              <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-60 overflow-auto z-10'>
                 {mechanics.map((m) => (
                   <div
                     key={m.id}
-                    className='px-2 py-1 hover:bg-gray-100 cursor-pointer'
+                    className='px-2 py-2 hover:bg-gray-100 cursor-pointer'
                     onClick={() => {
                       setNewService({ ...newService, mechanicIds: [m.id] });
                       setAddDropdownOpen(false);
                     }}
                   >
-                    {m.name} {m.surname}
+                    {m.first_name} {m.last_name}
                   </div>
                 ))}
               </div>
@@ -216,16 +228,17 @@ export default function ServicesPage() {
             Add
           </button>
         </div>
+
         <textarea
           placeholder='Description'
           ref={descriptionRef}
-          className='border p-2 rounded w-full resize-none overflow-hidden'
+          className='border p-2 rounded w-96 resize-none overflow-hidden'
           value={newService.description}
           onChange={(e) => {
             setNewService({ ...newService, description: e.target.value });
             resizeTextarea(descriptionRef.current);
           }}
-          rows={1}
+          rows={2}
         />
       </div>
 
@@ -242,13 +255,12 @@ export default function ServicesPage() {
               </p>
               <p className='text-gray-600'>{s.description}</p>
               <p>Price: ${s.price}</p>
-              <p>Description: {s.description || '-'}</p>
               <p>
                 Mechanic:{' '}
                 {s.mechanicIds
                   .map((id) => {
                     const m = mechanics.find((mech) => mech.id === id);
-                    return m ? `${m.name} ${m.surname}` : '';
+                    return m ? `${m.first_name} ${m.last_name}` : 'Unknown';
                   })
                   .join(', ') || '-'}
               </p>
@@ -298,7 +310,7 @@ export default function ServicesPage() {
             />
             <input
               placeholder='Name'
-              className='border p-2 rounded w-full'
+              className='border px-2 py-1 rounded w-32' // smaller width
               value={editService.name}
               onChange={(e) =>
                 setEditService((prev) =>
@@ -309,29 +321,32 @@ export default function ServicesPage() {
             <input
               placeholder='Price'
               type='number'
-              className='border p-2 rounded w-full'
+              min={10}
+              className='border px-2 py-1 rounded w-24'
               value={editService.price}
               onChange={(e) =>
                 setEditService((prev) =>
-                  prev ? { ...prev, price: +e.target.value } : prev,
+                  prev
+                    ? { ...prev, price: Math.max(0, +e.target.value) }
+                    : prev,
                 )
               }
             />
             <textarea
               placeholder='Description'
               ref={editTextareaRef}
-              className='border p-2 rounded w-full resize-none overflow-hidden'
+              className='border p-2 rounded w-96 resize-none overflow-hidden' // bigger description
               value={editService.description || ''}
               onChange={(e) => {
-                const val = e.target.value;
                 setEditService((prev) =>
-                  prev ? { ...prev, description: val } : prev,
+                  prev ? { ...prev, description: e.target.value } : prev,
                 );
                 resizeTextarea(editTextareaRef.current);
               }}
-              rows={1}
+              rows={2}
             />
-            <div className='relative'>
+
+            <div className='relative w-48'>
               <button
                 className='border px-2 py-1 rounded w-full flex justify-between'
                 onClick={() => setEditDropdownOpen(!editDropdownOpen)}
@@ -340,60 +355,51 @@ export default function ServicesPage() {
                   ? editService.mechanicIds
                       .map((id) => {
                         const m = mechanics.find((mech) => mech.id === id);
-                        return m ? `${m.name} ${m.surname}` : '';
+                        return m ? `${m.first_name} ${m.last_name}` : 'Unknown';
                       })
                       .join(', ')
                   : 'Select Mechanic'}
                 <span>▼</span>
               </button>
               {editDropdownOpen && (
-                <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-40 overflow-auto z-10'>
+                <div className='absolute bg-white border mt-1 rounded shadow w-full max-h-60 overflow-auto z-10'>
                   {mechanics.map((m) => (
                     <div
                       key={m.id}
-                      className='px-2 py-1 hover:bg-gray-100 cursor-pointer'
+                      className='px-2 py-2 hover:bg-gray-100 cursor-pointer'
                       onClick={() =>
                         setEditService((prev) =>
                           prev ? { ...prev, mechanicIds: [m.id] } : prev,
                         )
                       }
                     >
-                      {m.name} {m.surname}
+                      {m.first_name} {m.last_name}
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Save / Cancel buttons */}
-            {(() => {
-              const canSaveNow =
-                editService.name &&
-                editService.price > 0 &&
-                editService.mechanicIds.length > 0 &&
-                editService.description;
-              return (
-                <div className='flex justify-end gap-3'>
-                  <button
-                    className='px-4 py-2 border rounded'
-                    onClick={() => setEditService(null)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className={`px-4 py-2 rounded text-white ${
-                      canSaveNow
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-gray-400 cursor-not-allowed'
-                    }`}
-                    disabled={!canSaveNow}
-                    onClick={saveServiceHandler}
-                  >
-                    Save
-                  </button>
-                </div>
-              );
-            })()}
+            <div className='flex justify-end gap-3'>
+              <button
+                className='px-4 py-2 border rounded'
+                onClick={() => setEditService(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className={`px-4 py-2 rounded text-white ${editService.name && editService.price > 0 && editService.mechanicIds.length > 0 && editService.description ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                disabled={
+                  !editService.name ||
+                  editService.price <= 0 ||
+                  editService.mechanicIds.length === 0 ||
+                  !editService.description
+                }
+                onClick={saveServiceHandler}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}
