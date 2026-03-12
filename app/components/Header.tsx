@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { IoLocationSharp } from 'react-icons/io5';
 import { RxHamburgerMenu } from 'react-icons/rx';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
@@ -24,16 +25,16 @@ export default function Header() {
       : 'text-[#062E52] font-bold';
 
   return (
-    <header className='sticky top-0 z-50 bg-white shadow-md h-30 transition-all duration-300'>
-      <div className='mx-auto flex max-w-7xl items-center justify-between px-4 h-full'>
+    <header className='sticky top-0 z-50 bg-white shadow-md py-3'>
+      <div className='mx-auto flex max-w-7xl items-center justify-between px-4'>
         {/* Logo */}
         <Link href='/'>
           <Image
-            src='/images/logo.png'
+            src='/images/Logo.png'
             alt='JOM Auto Logo'
-            width={140}
-            height={30}
-            className='object-contain cursor-pointer'
+            width={400}
+            height={160}
+            className='h-16 w-auto object-contain cursor-pointer'
           />
         </Link>
 
@@ -55,8 +56,8 @@ export default function Header() {
         {/* Icons + Mobile */}
         <div className='flex items-center gap-2 md:gap-4 text-sm'>
           {/* Location Icon */}
-          <button className='text-yellow-500 hover:text-yellow-600 transition'>
-            <IoLocationSharp size={22} />
+          <button className='text-yellow-500 hover:text-yellow-600 transition p-2 rounded-full hover:bg-yellow-50'>
+            <IoLocationSharp size={32} />
           </button>
 
           {/* Mobile Hamburger */}
@@ -66,35 +67,7 @@ export default function Header() {
           >
             <RxHamburgerMenu size={24} />
           </button>
-
-          {/* Language Selector */}
-          <div className='relative hidden md:block'>
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className='flex items-center gap-1 rounded-md border border-yellow-400 px-2 py-1 hover:bg-yellow-100 text-yellow-700 text-xs'
-            >
-              <Image src='/images/de.png' alt='DE' width={16} height={16} />
-              DE
-            </button>
-
-            {langOpen && (
-              <div className='absolute right-0 mt-1 w-24 rounded-md border bg-white shadow-lg overflow-hidden z-20 text-xs'>
-                <button className='flex w-full items-center gap-1 px-2 py-1 hover:bg-gray-100 transition'>
-                  <Image
-                    src='/images/en2.png'
-                    alt='EN'
-                    width={16}
-                    height={16}
-                  />
-                  EN
-                </button>
-                <button className='flex w-full items-center gap-1 px-2 py-1 hover:bg-gray-100 transition'>
-                  <Image src='/images/de.png' alt='DE' width={16} height={16} />
-                  DE
-                </button>
-              </div>
-            )}
-          </div>
+          <LanguageSwitcher />
         </div>
       </div>
 
