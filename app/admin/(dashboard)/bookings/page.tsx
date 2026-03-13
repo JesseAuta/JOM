@@ -434,8 +434,8 @@ export default function BookingPage() {
             </div>
           )}
         </div>
-
-        <div className='sticky top-6 hidden h-fit w-80 rounded-xl border bg-white p-6 lg:block'>
+        {/* Sidebar panel */}
+        <div className='sticky top-6 hidden h-[calc(100vh-3rem)] w-80 rounded-xl bg-white p-6 shadow-lg lg:block'>
           <h3 className='mb-4 text-lg font-semibold'>Admin Added Blocks</h3>
 
           {blocks.length === 0 && (
@@ -443,11 +443,11 @@ export default function BookingPage() {
           )}
 
           {blocks.length > 0 && (
-            <div className='max-h-[500px] space-y-3 overflow-y-auto text-sm'>
+            <div className='max-h-full space-y-3 overflow-y-auto text-sm pr-2'>
               {blocks.map((block, index) => (
                 <div
                   key={block.id ?? index}
-                  className='rounded border bg-gray-50 p-3'
+                  className='rounded border border-gray-200 bg-gray-50 p-3 shadow-sm'
                 >
                   <p className='font-medium'>{block.date}</p>
                   <p className='text-xs text-gray-600'>
