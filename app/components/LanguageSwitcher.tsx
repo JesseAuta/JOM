@@ -7,17 +7,17 @@ type Language = 'DE' | 'EN';
 
 const languages = [
   {
-    code: 'DE' as Language,
-    flag: 'https://flagcdn.com/w40/de.png',
-  },
-  {
     code: 'EN' as Language,
     flag: 'https://flagcdn.com/w40/gb.png',
+  },
+  {
+    code: 'DE' as Language,
+    flag: 'https://flagcdn.com/w40/de.png',
   },
 ];
 
 export default function LanguageSwitcher() {
-  const [language, setLanguage] = useState<Language>('DE');
+  const [language, setLanguage] = useState<Language>('EN');
   const [open, setOpen] = useState(false);
 
   const selected = languages.find((l) => l.code === language);
