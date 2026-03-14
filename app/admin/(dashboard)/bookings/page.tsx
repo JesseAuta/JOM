@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import {
   format,
   startOfToday,
@@ -17,13 +18,22 @@ import {
 type BlockType = 'day' | 'slot';
 
 interface Block {
+  id?: number;
   type: BlockType;
   date: string;
   time?: string;
   reason: string;
 }
 
+interface BookingBlockApiItem {
+  id: number;
+  block_date: string;
+  block_time?: string | null;
+  reason: string;
+}
+
 const today = startOfToday();
+const BLOCKS_URL = 'http://localhost:8000/admin/booking-blocks';
 
 export default function BookingPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -45,7 +55,29 @@ export default function BookingPage() {
 
   const [reason, setReason] = useState('');
 
-  // ---------- CALENDAR ----------
+  const fetchBlocks = async () => {
+    try {
+      const res = await axios.get<BookingBlockApiItem[]>(BLOCKS_URL, {
+        withCredentials: true,
+      });
+
+      const mappedBlocks: Block[] = res.data.map((item) => ({
+        id: item.id,
+        type: item.block_time ? 'slot' : 'day',
+        date: item.block_date,
+        time: item.block_time ? item.block_time.slice(0, 5) : '',
+        reason: item.reason || '',
+      }));
+
+      setBlocks(mappedBlocks);
+    } catch (err) {
+      console.error('Error fetching booking blocks', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlocks();
+  }, []);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -56,8 +88,6 @@ export default function BookingPage() {
   });
 
   const startPadding = getDay(monthStart) === 0 ? 6 : getDay(monthStart) - 1;
-
-  // ---------- HELPERS ----------
 
   const dateKey = (date: Date) => format(date, 'yyyy-MM-dd');
 
@@ -79,21 +109,28 @@ export default function BookingPage() {
   const isSlotBlocked = (date: string, time: string) =>
     blocks.some((b) => b.type === 'slot' && b.date === date && b.time === time);
 
-  const removeBlock = (date: string, time?: string) => {
-    setBlocks((prev) =>
-      prev.filter(
-        (b) =>
-          !(b.date === date && (time ? b.time === time : b.type === 'day')),
-      ),
+  const removeBlock = async (date: string, time?: string) => {
+    const block = blocks.find(
+      (b) => b.date === date && (time ? b.time === time : b.type === 'day'),
     );
-  };
 
-  // ---------- SLOTS ----------
+    if (!block?.id) return;
+
+    try {
+      await axios.delete(`${BLOCKS_URL}/${block.id}`, {
+        withCredentials: true,
+      });
+
+      setBlocks((prev) => prev.filter((b) => b.id !== block.id));
+    } catch (err) {
+      console.error('Error deleting block', err);
+    }
+  };
 
   const generateSlots = () => {
     const list: string[] = [];
     let start = new Date();
-    start.setHours(9, 0, 0);
+    start.setHours(9, 0, 0, 0);
 
     for (let i = 0; i < 14; i++) {
       list.push(format(start, 'HH:mm'));
@@ -105,52 +142,56 @@ export default function BookingPage() {
 
   const slots = generateSlots();
 
-  // ---------- SAVE BLOCK ----------
+  const saveBlock = async () => {
+    try {
+      const res = await axios.post(
+        BLOCKS_URL,
+        {
+          block_date: modal.date,
+          block_time: modal.time || null,
+          reason,
+        },
+        { withCredentials: true },
+      );
 
-  const saveBlock = () => {
-    const type: BlockType = modal.time ? 'slot' : 'day';
+      const created = res.data;
 
-    setBlocks((prev) => [
-      ...prev,
-      {
-        type,
-        date: modal.date,
-        time: modal.time,
-        reason,
-      },
-    ]);
+      setBlocks((prev) => [
+        ...prev,
+        {
+          id: created.id,
+          type: modal.time ? 'slot' : 'day',
+          date: created.block_date,
+          time: modal.time || '',
+          reason: created.reason || '',
+        },
+      ]);
 
-    setModal({ open: false, date: '', time: '' });
-    setReason('');
+      setModal({ open: false, date: '', time: '' });
+      setReason('');
+    } catch (err) {
+      console.error('Error saving block', err);
+    }
   };
-
-  // ---------- COLORS ----------
 
   const getDayColor = (date: Date) => {
     const key = dateKey(date);
 
     if (isDayBlocked(key)) return 'bg-red-500 text-white';
-
     if (hasBlockedSlots(key)) return 'bg-pink-300 text-black';
     if (selectedDate && dateKey(selectedDate) === key) return 'border';
 
     return 'bg-gray-100 hover:bg-blue-100';
   };
 
-  // ============================
-  //            RENDER
-  // ============================
-
   return (
     <div className='p-6'>
-      <div className='flex flex-col lg:flex-row gap-8'>
-        {/* LEFT SIDE - Calendar & Slots */}
+      <div className='flex flex-col gap-8 lg:flex-row'>
         <div className='flex-1 space-y-6'>
-          {/* HEADER */}
           <div className='flex items-center gap-3'>
             <button
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-              className='px-3 py-1 border rounded'
+              className='rounded border px-3 py-1'
             >
               ←
             </button>
@@ -161,27 +202,25 @@ export default function BookingPage() {
 
             <button
               onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-              className='px-3 py-1 border rounded'
+              className='rounded border px-3 py-1'
             >
               →
             </button>
 
             <button
               onClick={() => setCurrentDate(new Date())}
-              className='ml-auto bg-blue-600 text-white px-3 py-1 rounded'
+              className='ml-auto rounded bg-blue-600 px-3 py-1 text-white'
             >
               Today
             </button>
           </div>
 
-          {/* WEEK DAYS */}
           <div className='grid grid-cols-7 text-center font-semibold'>
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
               <div key={d}>{d}</div>
             ))}
           </div>
 
-          {/* CALENDAR GRID */}
           <div className='grid grid-cols-7 gap-2'>
             {Array.from({ length: startPadding }).map((_, i) => (
               <div key={i} />
@@ -196,9 +235,9 @@ export default function BookingPage() {
                   key={key}
                   disabled={disabled}
                   onClick={() => !disabled && setSelectedDate(date)}
-                  className={`p-3 rounded-lg ${
+                  className={`rounded-lg p-3 ${
                     disabled
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      ? 'cursor-not-allowed bg-gray-200 text-gray-400'
                       : getDayColor(date)
                   }`}
                 >
@@ -208,10 +247,9 @@ export default function BookingPage() {
             })}
           </div>
 
-          {/* SLOTS */}
           {selectedDate && (
             <div className='space-y-4'>
-              <h3 className='font-semibold text-lg'>
+              <h3 className='text-lg font-semibold'>
                 Slots — {format(selectedDate, 'dd MMM yyyy')}
               </h3>
 
@@ -225,10 +263,9 @@ export default function BookingPage() {
                   return (
                     <button
                       key={time}
-                      disabled={pastSlot} // only past slots disabled
+                      disabled={pastSlot}
                       onClick={() => {
                         if (dayBlocked) {
-                          // Whole day blocked → ask for unblock
                           const block = blocks.find(
                             (b) => b.type === 'day' && b.date === key,
                           );
@@ -242,7 +279,6 @@ export default function BookingPage() {
                         }
 
                         if (slotBlocked) {
-                          // Slot is blocked → ask for unblock
                           const block = blocks.find(
                             (b) =>
                               b.type === 'slot' &&
@@ -258,18 +294,17 @@ export default function BookingPage() {
                           return;
                         }
 
-                        if (pastSlot) return; // cannot select past slot
+                        if (pastSlot) return;
 
-                        // Slot is free → open block modal
                         setModal({ open: true, date: key, time });
                       }}
-                      className={`p-2 rounded border ${
+                      className={`rounded border p-2 ${
                         dayBlocked
                           ? 'bg-red-500 text-white'
                           : slotBlocked
                             ? 'bg-pink-400 text-white'
                             : pastSlot
-                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                              ? 'cursor-not-allowed bg-gray-200 text-gray-400'
                               : 'bg-white hover:bg-blue-50'
                       }`}
                     >
@@ -279,37 +314,34 @@ export default function BookingPage() {
                 })}
               </div>
 
-              {selectedDate && (
-                <button
-                  onClick={() => {
-                    const key = dateKey(selectedDate);
-                    if (isDayBlocked(key)) {
-                      // If already blocked, unblock all day
-                      removeBlock(key);
-                      return;
-                    }
-                    // Otherwise, open modal to block
-                    setModal({ open: true, date: key, time: '' });
-                  }}
-                  className={`px-4 py-2 rounded ${
-                    selectedDate && isDayBlocked(dateKey(selectedDate))
-                      ? 'bg-green-600 text-white'
-                      : 'bg-red-600 text-white'
-                  }`}
-                >
-                  {selectedDate && isDayBlocked(dateKey(selectedDate))
-                    ? 'Unblock whole day'
-                    : 'Block whole day'}
-                </button>
-              )}
+              <button
+                onClick={() => {
+                  const key = dateKey(selectedDate);
+
+                  if (isDayBlocked(key)) {
+                    removeBlock(key);
+                    return;
+                  }
+
+                  setModal({ open: true, date: key, time: '' });
+                }}
+                className={`rounded px-4 py-2 ${
+                  isDayBlocked(dateKey(selectedDate))
+                    ? 'bg-green-600 text-white'
+                    : 'bg-red-600 text-white'
+                }`}
+              >
+                {isDayBlocked(dateKey(selectedDate))
+                  ? 'Unblock whole day'
+                  : 'Block whole day'}
+              </button>
             </div>
           )}
 
-          {/* BLOCK MODAL */}
           {modal.open && (
-            <div className='fixed inset-0 bg-black/40 flex items-center justify-center'>
-              <div className='bg-white rounded-xl p-6 w-96 space-y-4'>
-                <h3 className='font-semibold text-lg'>
+            <div className='fixed inset-0 flex items-center justify-center bg-black/40'>
+              <div className='w-96 space-y-4 rounded-xl bg-white p-6'>
+                <h3 className='text-lg font-semibold'>
                   Block {modal.time ? 'slot' : 'day'}
                 </h3>
 
@@ -321,7 +353,7 @@ export default function BookingPage() {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder='Reason...'
-                  className='w-full border rounded p-2'
+                  className='w-full rounded border p-2'
                 />
 
                 <div className='flex justify-end gap-3'>
@@ -329,7 +361,7 @@ export default function BookingPage() {
                     onClick={() =>
                       setModal({ open: false, date: '', time: '' })
                     }
-                    className='px-4 py-2 border rounded'
+                    className='rounded border px-4 py-2'
                   >
                     Cancel
                   </button>
@@ -342,7 +374,7 @@ export default function BookingPage() {
                       }
                       saveBlock();
                     }}
-                    className='px-4 py-2 bg-red-600 text-white rounded'
+                    className='rounded bg-red-600 px-4 py-2 text-white'
                   >
                     Block
                   </button>
@@ -351,10 +383,9 @@ export default function BookingPage() {
             </div>
           )}
 
-          {/* CONFIRM UNBLOCK MODAL */}
           {confirm.open && (
-            <div className='fixed inset-0 bg-black/40 flex items-center justify-center'>
-              <div className='bg-white rounded-xl p-6 w-96 space-y-4'>
+            <div className='fixed inset-0 flex items-center justify-center bg-black/40'>
+              <div className='w-96 space-y-4 rounded-xl bg-white p-6'>
                 <h3 className='text-lg font-semibold'>
                   Unblock {confirm.time ? 'slot' : 'day'}?
                 </h3>
@@ -364,7 +395,7 @@ export default function BookingPage() {
                 </p>
 
                 {confirm.reason && (
-                  <div className='bg-gray-100 p-3 rounded text-sm'>
+                  <div className='rounded bg-gray-100 p-3 text-sm'>
                     Reason: {confirm.reason}
                   </div>
                 )}
@@ -379,7 +410,7 @@ export default function BookingPage() {
                         reason: '',
                       })
                     }
-                    className='px-4 py-2 border rounded'
+                    className='rounded border px-4 py-2'
                   >
                     Cancel
                   </button>
@@ -394,7 +425,7 @@ export default function BookingPage() {
                         reason: '',
                       });
                     }}
-                    className='px-4 py-2 bg-green-600 text-white rounded'
+                    className='rounded bg-green-600 px-4 py-2 text-white'
                   >
                     Unblock
                   </button>
@@ -403,25 +434,27 @@ export default function BookingPage() {
             </div>
           )}
         </div>
-
-        {/* ADMIN INFORMATION PANEL - DESKTOP */}
-        <div className='hidden lg:block w-80 bg-white border rounded-xl p-6 h-fit sticky top-6'>
-          <h3 className='text-lg font-semibold mb-4'>Admin Added Blocks</h3>
+        {/* Sidebar panel */}
+        <div className='sticky top-6 hidden h-[calc(100vh-3rem)] w-80 rounded-xl bg-white p-6 shadow-lg lg:block'>
+          <h3 className='mb-4 text-lg font-semibold'>Admin Added Blocks</h3>
 
           {blocks.length === 0 && (
-            <p className='text-gray-500 text-sm'>No blocks added yet.</p>
+            <p className='text-sm text-gray-500'>No blocks added yet.</p>
           )}
 
           {blocks.length > 0 && (
-            <div className='space-y-3 text-sm max-h-\[500px\] overflow-y-auto'>
+            <div className='max-h-full space-y-3 overflow-y-auto text-sm pr-2'>
               {blocks.map((block, index) => (
-                <div key={index} className='border rounded p-3 bg-gray-50'>
+                <div
+                  key={block.id ?? index}
+                  className='rounded border border-gray-200 bg-gray-50 p-3 shadow-sm'
+                >
                   <p className='font-medium'>{block.date}</p>
                   <p className='text-xs text-gray-600'>
                     {block.type === 'day' ? 'Whole Day' : `Slot: ${block.time}`}
                   </p>
                   {block.reason && (
-                    <p className='mt-1 text-gray-700 text-xs'>{block.reason}</p>
+                    <p className='mt-1 text-xs text-gray-700'>{block.reason}</p>
                   )}
                 </div>
               ))}
@@ -430,24 +463,26 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* ADMIN INFORMATION PANEL - MOBILE / BOTTOM */}
-      <div className='lg:hidden mt-8 bg-white border rounded-xl p-6'>
-        <h3 className='text-lg font-semibold mb-4'>Admin Added Blocks</h3>
+      <div className='mt-8 rounded-xl border bg-white p-6 lg:hidden'>
+        <h3 className='mb-4 text-lg font-semibold'>Admin Added Blocks</h3>
 
         {blocks.length === 0 && (
-          <p className='text-gray-500 text-sm'>No blocks added yet.</p>
+          <p className='text-sm text-gray-500'>No blocks added yet.</p>
         )}
 
         {blocks.length > 0 && (
           <div className='space-y-3 text-sm'>
             {blocks.map((block, index) => (
-              <div key={index} className='border rounded p-3 bg-gray-50'>
+              <div
+                key={block.id ?? index}
+                className='rounded border bg-gray-50 p-3'
+              >
                 <p className='font-medium'>{block.date}</p>
                 <p className='text-xs text-gray-600'>
                   {block.type === 'day' ? 'Whole Day' : `Slot: ${block.time}`}
                 </p>
                 {block.reason && (
-                  <p className='mt-1 text-gray-700 text-xs'>{block.reason}</p>
+                  <p className='mt-1 text-xs text-gray-700'>{block.reason}</p>
                 )}
               </div>
             ))}
