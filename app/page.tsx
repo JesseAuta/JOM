@@ -1,13 +1,16 @@
 import Image from "next/image";
 import SearchBar from "./components/SearchBar";
+import MapSection from "./components/MapSection";
 
 export default function Home() {
   return (
     <>
+      {/* Search */}
       <div className="mt-6">
         <SearchBar />
       </div>
 
+      {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 py-10">
 
         {/* Text ABOVE the hero image */}
@@ -35,6 +38,10 @@ export default function Home() {
         </div>
 
       </div>
+
+      {/* Map Section */}
+      <MapSection />
+
     </>
   );
 }

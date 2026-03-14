@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API = "http://localhost:8000";
 
 const serviceIcons: Record<string, string> = {
   "Wheel Change": "🔄", "Tyre Fitting": "🔧", "Oil Change": "🛢️",
