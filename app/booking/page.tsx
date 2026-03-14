@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const API = 'http://localhost:8000';
-console.log(API);
+const API = "http://localhost:8000";
 
 const serviceIcons: Record<string, string> = {
   'Wheel Change': '🔄',

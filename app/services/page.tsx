@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const API = 'http://localhost:8000';
+const API = "http://localhost:8000";
 
 const serviceIcons: Record<string, string> = {
   'Wheel Change': '🔄',
