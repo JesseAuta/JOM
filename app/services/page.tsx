@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const API = "http://localhost:8000";
+const API = 'http://localhost:8000';
 
 const serviceIcons: Record<string, string> = {
   'Wheel Change': '🔄',
@@ -83,9 +83,16 @@ export default function ServicesPage() {
                   {s.description}
                 </p>
                 <Link
-                  href='/booking'
+                  href={{
+                    pathname: '/booking',
+                    query: {
+                      serviceId: s.id,
+                      serviceName: s.name,
+                      step: 2,
+                    },
+                  }}
                   className='w-full py-3 bg-[#F5C518] text-[#1a2b4a] font-extrabold rounded-xl text-sm text-center
-                             shadow-[0_4px_14px_rgba(245,197,24,0.3)] hover:brightness-105 transition-all'
+             shadow-[0_4px_14px_rgba(245,197,24,0.3)] hover:brightness-105 transition-all'
                 >
                   Book Now
                 </Link>
@@ -105,7 +112,7 @@ export default function ServicesPage() {
             className='inline-block px-8 py-4 bg-[#F5C518] text-[#1a2b4a] font-extrabold rounded-xl
                        shadow-[0_4px_14px_rgba(245,197,24,0.4)] hover:brightness-105 transition-all'
           >
-            Book an Appointment
+            Book appointment
           </Link>
         </div>
       </div>
