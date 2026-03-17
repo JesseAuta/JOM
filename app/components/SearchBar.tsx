@@ -1,58 +1,87 @@
 "use client";
 
 import { useState, useEffect, useRef, FC } from "react";
+import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
+  query: string;
+  setQuery: (value: string) => void;
   data?: string[];
   onSelect?: (item: string) => void;
   delay?: number;
+  navigateToServices?: boolean;
 }
 
-const SearchBar: FC<SearchBarProps> = ({ data = [], onSelect, delay = 300 }) => {
-  const [query, setQuery] = useState<string>("");
+const SearchBar: FC<SearchBarProps> = ({
+  query,
+  setQuery,
+  data = [],
+  onSelect,
+  delay = 300,
+  navigateToServices = false,
+}) => {
+  const router = useRouter();
   const [filtered, setFiltered] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Remove duplicates before filtering
+  const uniqueData = Array.from(new Set(data));
+
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (!query.trim()) {
+      const safeQuery = query ?? "";
+      if (!safeQuery.trim()) {
         setFiltered([]);
         setShowDropdown(false);
         return;
       }
-      const matches = data.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
+
+      const matches = uniqueData.filter((item) =>
+        item.toLowerCase().includes(safeQuery.toLowerCase())
       );
       setFiltered(matches);
       setShowDropdown(matches.length > 0);
     }, delay);
 
     return () => clearTimeout(handler);
-  }, [query, data, delay]);
+  }, [query, uniqueData, delay]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSelect = (item: string) => {
-    setQuery(item);
+    if (navigateToServices) {
+      router.push(`/services?query=${encodeURIComponent(item)}`);
+    } else {
+      setQuery(item);
+      onSelect?.(item);
+    }
     setShowDropdown(false);
-    onSelect?.(item);
   };
 
   const highlightMatch = (item: string) => {
-    const index = item.toLowerCase().indexOf(query.toLowerCase());
+    const safeQuery = query ?? "";
+    if (!safeQuery) return item;
+
+    const index = item.toLowerCase().indexOf(safeQuery.toLowerCase());
     if (index === -1) return item;
+
     const start = item.slice(0, index);
-    const match = item.slice(index, index + query.length);
-    const end = item.slice(index + query.length);
+    const match = item.slice(index, index + safeQuery.length);
+    const end = item.slice(index + safeQuery.length);
+
     return (
       <>
         {start}
@@ -63,7 +92,7 @@ const SearchBar: FC<SearchBarProps> = ({ data = [], onSelect, delay = 300 }) => 
   };
 
   return (
-    <div className=" py-4 relative" ref={dropdownRef}>
+    <div className="py-4 relative" ref={dropdownRef}>
       <div className="mx-auto max-w-7xl px-4">
         <input
           type="text"
