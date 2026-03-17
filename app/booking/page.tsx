@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-const API = "http://localhost:8000";
+const API = 'http://localhost:8000';
 
 const serviceIcons: Record<string, string> = {
   'Wheel Change': '🔄',
@@ -104,6 +105,7 @@ export default function BookingPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<CarModel[]>([]);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetch(API + '/api/services')
@@ -123,6 +125,24 @@ export default function BookingPage() {
       .then((data) => setModels(Array.isArray(data) ? data : []))
       .catch(console.error);
   }, [formData.brandId]);
+
+  useEffect(() => {
+    const step = searchParams.get('step');
+    const serviceId = searchParams.get('serviceId');
+    const serviceName = searchParams.get('serviceName');
+
+    if (serviceId && serviceName) {
+      setFormData((prev) => ({
+        ...prev,
+        serviceId: Number(serviceId),
+        serviceName: serviceName,
+      }));
+    }
+
+    if (step) {
+      setCurrentStep(Number(step));
+    }
+  }, [searchParams]);
 
   const visibleServices = formData.showAllServices
     ? services
@@ -163,7 +183,7 @@ export default function BookingPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch(API + '/api/appointments', {
+      const res = await fetch(API + '/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -175,8 +195,8 @@ export default function BookingPage() {
           car_model_id: formData.modelId,
           car_year: Number(formData.year),
           service_id: formData.serviceId,
-          appointment_date: formData.date,
-          appointment_time: formData.time,
+          booking_date: formData.date,
+          booking_time: formData.time,
           pickup_required: formData.deliveryOption === 'pickup',
           delivery_required: formData.deliveryOption === 'delivery',
         }),
@@ -254,7 +274,7 @@ export default function BookingPage() {
                 style={{ flex: i < steps.length - 1 ? '1' : '0' }}
               >
                 <div
-                  className='flex flex-col items-center flex-shrink-0'
+                  className='flex flex-col items-center shrink-0'
                   onClick={() => {
                     if (step.number < currentStep) setCurrentStep(step.number);
                   }}
@@ -290,7 +310,7 @@ export default function BookingPage() {
                 {i < steps.length - 1 && (
                   <div
                     className={
-                      'h-[3px] flex-1 mx-2 rounded-full transition-all duration-300 ' +
+                      'h-0.75 flex-1 mx-2 rounded-full transition-all duration-300 ' +
                       (currentStep > i + 1 ? 'bg-[#F5C518]' : 'bg-gray-200')
                     }
                   />
@@ -684,7 +704,7 @@ export default function BookingPage() {
                     key={row.label}
                     className='flex gap-2 text-sm text-gray-600 pb-2 mb-2 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0'
                   >
-                    <span className='font-bold text-[#1a2b4a] min-w-[90px]'>
+                    <span className='font-bold text-[#1a2b4a] min-w-22.5'>
                       {row.label}:
                     </span>
                     <span>{row.value}</span>
