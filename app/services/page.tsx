@@ -1,19 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-const API = 'http://localhost:8000';
+const API = "http://localhost:8000";
 
 const serviceIcons: Record<string, string> = {
-  'Wheel Change': '🔄',
-  'Tyre Fitting': '🔧',
-  'Oil Change': '🛢️',
-  Brakes: '🛑',
-  'AdBlue & Fluids': '💧',
-  Inspection: '🔩',
-  'MOT Preparation': '🚗',
-  'Air Conditioning': '❄️',
+  "Wheel Change": "🔄",
+  "Tyre Fitting": "🔧",
+  "Oil Change": "🛢️",
+  Brakes: "🛑",
+  "AdBlue & Fluids": "💧",
+  Inspection: "🔩",
+  "MOT Preparation": "🚗",
+  "Air Conditioning": "❄️",
 };
 
 interface Service {
@@ -24,75 +25,93 @@ interface Service {
 }
 
 export default function ServicesPage() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("query") ?? "";
+
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query] = useState(initialQuery.trim().toLowerCase());
 
   useEffect(() => {
-    fetch(API + '/api/services')
-      .then((r) => r.json())
+    fetch(API + "/api/services")
+      .then((res) => res.json())
       .then((data) => {
         setServices(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch(console.error);
   }, []);
 
+  // Remove duplicates by service name
+  const uniqueServices = Array.from(
+    new Map(services.map((s) => [s.name, s])).values()
+  );
+
+  // Filter services based on query
+  const filteredServices =
+    query === "" || query === "all services"
+      ? uniqueServices // Show all services if query is empty or "all services"
+      : uniqueServices.filter((s) => {
+          const search = query;
+          return (
+            s.name.toLowerCase().includes(search) ||
+            s.description.toLowerCase().includes(search) ||
+            s.price.toString().includes(search)
+          );
+        });
+
   return (
-    <div className='min-h-screen bg-gray-50 py-12 px-4'>
-      <div className='max-w-5xl mx-auto'>
-        {/* Header */}
-        <div className='text-center mb-12'>
-          <h1 className='text-4xl font-extrabold text-blue-500 mb-4'>
-            Our Services
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-extrabold text-blue-500 mb-4">
+            {query === "" || query === "all services"
+              ? "All Services"
+              : "Search Results"}
           </h1>
-          <p className='text-gray-500 text-lg max-w-xl mx-auto'>
-            Professional auto services at competitive prices. Book your
-            appointment online in minutes.
-          </p>
+          {query && query !== "all services" && (
+            <p className="text-gray-500 text-lg">
+              Showing results for: <span className="font-bold">{query}</span>
+            </p>
+          )}
         </div>
 
-        {/* Services Grid */}
         {loading ? (
-          <div className='text-center text-gray-400 py-20'>
-            Loading services...
+          <div className="text-center text-gray-400 py-20">Loading...</div>
+        ) : filteredServices.length === 0 ? (
+          <div className="text-center text-gray-400 py-20">
+            No services found 😕
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
-            {services.map((s) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {filteredServices.map((s) => (
               <div
                 key={s.id}
-                className='bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-4 hover:shadow-md transition-all duration-200'
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-4 hover:shadow-md transition-all duration-200"
               >
-                <div className='flex items-center gap-4'>
-                  <div className='w-14 h-14 rounded-xl bg-yellow-50 flex items-center justify-center text-3xl'>
-                    {serviceIcons[s.name] || '🔧'}
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-yellow-50 flex items-center justify-center text-3xl">
+                    {serviceIcons[s.name] || "🔧"}
                   </div>
                   <div>
-                    <h3 className='text-lg font-extrabold text-[#1a2b4a]'>
+                    <h3 className="text-lg font-extrabold text-[#1a2b4a]">
                       {s.name}
                     </h3>
-                    <span className='text-[#F5C518] font-bold text-base'>
+                    <span className="text-[#F5C518] font-bold text-base">
                       €{s.price}
                     </span>
                   </div>
                 </div>
-                <p className='text-sm text-gray-500 leading-relaxed flex-1'>
+                <p className="text-sm text-gray-500 leading-relaxed flex-1">
                   {s.description}
                 </p>
                 <Link
                   href={{
-                    pathname: '/booking',
-                    query: {
-                      serviceId: s.id,
-                      serviceName: s.name,
-                      step: 2,
-                    },
+                    pathname: "/booking",
+                    query: { serviceId: s.id, serviceName: s.name, step: 2 },
                   }}
-                  className='w-full py-3 bg-[#F5C518] text-[#1a2b4a] font-extrabold rounded-xl text-sm text-center
-             shadow-[0_4px_14px_rgba(245,197,24,0.3)] hover:brightness-105 transition-all'
+                  className="w-full py-3 bg-[#F5C518] text-[#1a2b4a] font-extrabold rounded-xl text-sm text-center
+             shadow-[0_4px_14px_rgba(245,197,24,0.3)] hover:brightness-105 transition-all"
                 >
                   Book Now
                 </Link>
@@ -100,21 +119,6 @@ export default function ServicesPage() {
             ))}
           </div>
         )}
-
-        {/* CTA */}
-        <div className='bg-[#1a2b4a] rounded-2xl p-10 text-center text-white'>
-          <h2 className='text-2xl font-extrabold mb-3 '>Ready to book?</h2>
-          <p className='text-gray-300 mb-6'>
-            Schedule your service appointment in just a few steps.
-          </p>
-          <Link
-            href='/booking'
-            className='inline-block px-8 py-4 bg-[#F5C518] text-[#1a2b4a] font-extrabold rounded-xl
-                       shadow-[0_4px_14px_rgba(245,197,24,0.4)] hover:brightness-105 transition-all'
-          >
-            Book appointment
-          </Link>
-        </div>
       </div>
     </div>
   );
