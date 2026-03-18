@@ -17,7 +17,9 @@ export default function Login() {
 
     try {
       await axios.post(
-        'http://localhost:8000/admin/login',
+
+        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api/admin/login',
+
         {
           email,
           password,

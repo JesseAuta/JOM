@@ -12,13 +12,12 @@ interface Service {
   description: string;
   hidden?: boolean;
 }
-
 interface Mechanic {
   id: number;
   first_name: string;
   last_name: string;
 }
-
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function ServicesPage() {
   const [mechanics, setMechanics] = useState<Mechanic[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -42,17 +41,17 @@ export default function ServicesPage() {
 
   const fetchMechanics = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/mechanics');
-      setMechanics(res.data);
-    } catch (err) {
-      console.error('Error fetching mechanics', err);
-    }
+  const res = await axios.get(`${API}/api/mechanics`);
+  setMechanics(res.data);
+} catch (err) {
+  console.error('Error fetching mechanics', err);
+}
   };
 
   const fetchServices = async () => {
     try {
       const res = await axios.get<Service[]>(
-        'http://localhost:8000/api/services',
+        `${API}/api/services`
       );
       setServices(
         res.data.map((s) => ({
@@ -88,7 +87,7 @@ export default function ServicesPage() {
       return;
     try {
       const res = await axios.post<Service>(
-        'http://localhost:8000/api/services',
+        `${API}/api/services`,
         newService,
       );
       setServices([
@@ -124,7 +123,7 @@ export default function ServicesPage() {
       return;
     try {
       await axios.put(
-        `http://localhost:8000/api/services/${editService.id}`,
+        `${API}/api/services/${editService.id}`,
         editService,
       );
       setServices((prev) =>
@@ -139,7 +138,7 @@ export default function ServicesPage() {
   const deleteServiceHandler = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
-      await axios.delete(`http://localhost:8000/api/services/${id}`);
+      await axios.delete(`${API}/api/services/${id}`);
       setServices((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
       console.error('Error deleting service', err);
@@ -149,7 +148,7 @@ export default function ServicesPage() {
   const toggleVisibility = async (s: Service) => {
     const updated = { ...s, hidden: !s.hidden };
     try {
-      await axios.put(`http://localhost:8000/api/services/${s.id}`, updated);
+      await axios.put(`${API}/api/services/${s.id}`, updated);
       setServices((prev) =>
         prev.map((srv) => (srv.id === s.id ? updated : srv)),
       );

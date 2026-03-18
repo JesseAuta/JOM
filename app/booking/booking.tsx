@@ -248,7 +248,7 @@ export default function BookingPage() {
 
   return (
     
-    <div className='min-h-screen bg-gray-100 py-8 px-4'>if (!formData.address) e.address = 'Address is required.';
+    <div className='min-h-screen bg-gray-100 py-8 px-4'>
       <div className='max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.08)]'>
         <div className='px-8 pt-10 pb-14 md:px-16'>
           <h1 className='text-3xl md:text-4xl font-extrabold text-blue-500 mb-3'>Book an Appointment</h1>
