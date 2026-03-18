@@ -1,0 +1,76 @@
+[33m60c6d06[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmurphy-api[m[33m)[m update-api
+[33m7dd87ed[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m update-api
+[33mc70a593[m[33m ([m[1;32mmain[m[33m)[m add suspense
+[33m31fe2f7[m update
+[33mcd96423[m update client
+[33mc47c9d5[m  update
+[33m85f600c[m bar-update
+[33m0961401[m update header, ubdate link to booking
+[33mc2562d3[m Merge pull request #27 from JesseAuta/jsa_map
+[33m2003363[m Merge branch 'main' into jsa_map
+[33mb7285a0[m responsive map added
+[33m96a4a07[m Merge pull request #26 from JesseAuta/olena_logout_connect_backend
+[33me282ef3[m updated dashboard, logout done
+[33m6a97d8a[m Merge pull request #25 from JesseAuta/olena_calendar
+[33m3792a45[m axios add to booking in admin
+[33m9c07ef0[m Merge pull request #24 from JesseAuta/olen_mechanic_adminpanel__DB
+[33md54999a[m controller mechanic
+[33m912dcb7[m Merge pull request #23 from JesseAuta/olena_admin_panel_connect_db
+[33mcadcfa3[m Merge branch 'main' into olena_admin_panel_connect_db
+[33m56c42b6[m conected admin service
+[33mc5b530c[m Merge pull request #22 from JesseAuta/jsa_admin
+[33m7f542b6[m[33m ([m[1;31morigin/jsa_admin[m[33m)[m updated
+[33m5834d02[m Merge pull request #21 from JesseAuta/olena_update_admin_panel
+[33mdff940b[m updated admin mechanics and services
+[33m810e175[m Merge pull request #20 from JesseAuta/olena_logout
+[33m9fc318f[m logout button
+[33m8c8d2dc[m Merge pull request #19 from JesseAuta/olena_avoid_direct_link
+[33mceb3855[m[33m ([m[1;31morigin/olena_avoid_direct_link[m[33m)[m updated login
+[33m7d8d4ca[m Merge pull request #18 from JesseAuta/about-su
+[33m2e024e4[m[33m ([m[1;31morigin/about-su[m[33m)[m Merge branch 'main' into about-su
+[33mcbe0957[m[33m ([m[1;32mabout-su[m[33m)[m feat: booking page API integration, services page, layout fixes
+[33m1c6b4b0[m database
+[33ma1ce1ed[m Merge pull request #17 from JesseAuta/about-su
+[33mcfa6050[m database
+[33mda7fdd2[m Merge pull request #16 from JesseAuta/olena_change_user_front
+[33m05a0d91[m solved the login problem
+[33md1ab230[m Merge pull request #15 from JesseAuta/murphy-booking
+[33md0afa9f[m[33m ([m[1;31morigin/murphy-booking[m[33m, [m[1;32mmurphy-booking[m[33m)[m update
+[33mc6c0920[m Merge pull request #14 from JesseAuta/about-su
+[33mee91827[m Merge branch 'main' into about-su
+[33mdb1faa1[m Update
+[33m2346bee[m Merge pull request #13 from JesseAuta/about-su
+[33m7856f1b[m Update
+[33m1ef9154[m Merge pull request #12 from JesseAuta/olena_update_dashboard
+[33md3bb3f2[m[33m ([m[1;31morigin/olena_update_dashboard[m[33m)[m Merge branch 'main' into olena_update_dashboard
+[33m903e9f4[m Merge pull request #11 from JesseAuta/about-su
+[33m8cb8888[m Update
+[33md0cd4ec[m Merge pull request #10 from JesseAuta/about-us
+[33me6a4650[m[33m ([m[1;31morigin/about-us[m[33m, [m[1;32mabout-us[m[33m)[m Update
+[33mb79cea4[m updated dashboard, booking
+[33m2b3fde1[m Merge pull request #9 from JesseAuta/jsa-Homepage
+[33me3cbee6[m Homepage
+[33m8737bb8[m updates
+[33m0bc73fb[m updates
+[33m9eeeb87[m Merge pull request #8 from JesseAuta/murphy-about
+[33m8924351[m[33m ([m[1;31morigin/murphy-about[m[33m, [m[1;32mmurphy-about[m[33m)[m Update About
+[33md70e239[m Merge pull request #7 from JesseAuta/olena_dashboard_booking
+[33me249cea[m Merge branch 'main' into olena_dashboard_booking
+[33mafa3bcf[m dashboard, booking
+[33me79e195[m Header Updated with Navlinks
+[33m729a0a5[m Merge pull request #6 from JesseAuta/murphy-about
+[33m07590c0[m Add Aboutme
+[33ma126f84[m Merge pull request #5 from JesseAuta/murphy-about
+[33md318605[m updated about
+[33m63c2edf[m Merge pull request #4 from JesseAuta/jsa_Header
+[33m92deee4[m[33m ([m[1;31morigin/jsa_Header[m[33m)[m updated
+[33md1b42f2[m Merge pull request #3 from JesseAuta/olena_login
+[33m85ba136[m Merge pull request #2 from JesseAuta/aboutme
+[33m5baac96[m Merge pull request #1 from JesseAuta/jsa_Header
+[33m1af4989[m[33m ([m[1;31morigin/olena_login[m[33m)[m Login, dashboard
+[33mc415dcf[m[33m ([m[1;31morigin/aboutme[m[33m, [m[1;32maboutme[m[33m)[m Add Aboutme
+[33m100d274[m jsa-latest
+[33m62af715[m updated
+[33m9b493c6[m[33m ([m[1;32mcopilot-worktree-2026-02-25T12-47-37[m[33m)[m frontend updated
+[33m1187cb6[m initial commit
+[33mcf17082[m Initial commit from Create Next App
