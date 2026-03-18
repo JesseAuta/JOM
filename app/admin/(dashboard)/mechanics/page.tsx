@@ -22,16 +22,16 @@ export default function MechanicsPage() {
   const [editMechanic, setEditMechanic] = useState<Mechanic | null>(null);
   const [visibleCount, setVisibleCount] = useState(5);
 
-  const fetchMechanics = async () => {
-    try {
-      const res = await axios.get<Mechanic[]>(
-        'http://localhost:8000/api/mechanics',
-      );
-      setMechanics(res.data);
-    } catch (err) {
-      console.error('Error fetching mechanics', err);
-    }
-  };
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+const fetchMechanics = async () => {
+  try {
+    const res = await axios.get<Mechanic[]>(`${API}/api/mechanics`);
+    setMechanics(res.data);
+  } catch (err) {
+    console.error('Error fetching mechanics', err);
+  }
+};
 
   useEffect(() => {
     fetchMechanics();

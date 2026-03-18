@@ -14,10 +14,10 @@ export default function Login() {
     console.log('EMAIL STATE:', email, 'PASSWORD STATE:', password);
     setLoading(true);
     setError('');
-
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     try {
       await axios.post(
-        'http://localhost:8000/admin/login',
+        `${API}/admin/login`,
         {
           email,
           password,

@@ -33,7 +33,9 @@ interface BookingBlockApiItem {
 }
 
 const today = startOfToday();
-const BLOCKS_URL = 'http://localhost:8000/admin/booking-blocks';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const BLOCKS_URL = `${API}/admin/booking-blocks`;
 
 export default function BookingPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
