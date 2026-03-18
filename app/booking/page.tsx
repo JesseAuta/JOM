@@ -105,6 +105,7 @@ export default function BookingPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<CarModel[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]); // NEW
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -125,6 +126,18 @@ export default function BookingPage() {
       .then((data) => setModels(Array.isArray(data) ? data : []))
       .catch(console.error);
   }, [formData.brandId]);
+
+  // NEW — fetch booked slots when date changes
+  useEffect(() => {
+    if (!formData.date) return;
+    setBookedSlots([]); // reset while loading
+    fetch(API + '/api/public/availability?date=' + formData.date)
+      .then((r) => r.json())
+      .then((data) =>
+        setBookedSlots(Array.isArray(data.bookedSlots) ? data.bookedSlots : []),
+      )
+      .catch(console.error);
+  }, [formData.date]);
 
   useEffect(() => {
     const step = searchParams.get('step');
@@ -477,7 +490,10 @@ export default function BookingPage() {
                     type='date'
                     value={formData.date}
                     min={new Date().toISOString().split('T')[0]}
-                    onChange={(e) => update('date', e.target.value)}
+                    onChange={(e) => {
+                      update('date', e.target.value);
+                      update('time', ''); // reset time when date changes
+                    }}
                     className={inputClass(errors.date)}
                   />
                   {errors.date && (
@@ -491,11 +507,18 @@ export default function BookingPage() {
                     value={formData.time}
                     onChange={(e) => update('time', e.target.value)}
                     className={inputClass(errors.time)}
+                    disabled={!formData.date}
                   >
-                    <option value=''>Time</option>
+                    <option value=''>
+                      {formData.date ? 'Select a time' : 'Select a date first'}
+                    </option>
                     {timeSlots.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
+                      <option
+                        key={t}
+                        value={t}
+                        disabled={bookedSlots.includes(t)}
+                      >
+                        {bookedSlots.includes(t) ? `${t} — Booked` : t}
                       </option>
                     ))}
                   </select>
