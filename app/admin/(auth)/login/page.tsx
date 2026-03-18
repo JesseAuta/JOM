@@ -9,6 +9,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('EMAIL STATE:', email, 'PASSWORD STATE:', password);
@@ -16,13 +18,12 @@ export default function Login() {
     setError('');
 
     try {
-      await axios.post(
-
-        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api/admin/login',
-
-        {
-          email,
-          password,
+    
+      
+        
+        await axios.post(`${API}/admin/login`, {
+  email,
+  password,
         },
         {
           withCredentials: true,
