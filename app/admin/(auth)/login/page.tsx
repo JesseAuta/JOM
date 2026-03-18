@@ -18,12 +18,13 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     setError('');
 
     try {
-    
-      
-        
-        await axios.post(`${API}/admin/login`, {
-  email,
-  password,
+      await axios.post(
+
+        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api/admin/login',
+
+        {
+          email,
+          password,
         },
         {
           withCredentials: true,
