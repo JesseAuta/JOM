@@ -167,6 +167,8 @@ export default function BookingPage() {
       if (!formData.phone.trim()) e.phone = 'Phone number is required.';
       if (!formData.numberplate.trim()) e.numberplate = 'Number plate is required.';
       if (!formData.deliveryOption) e.deliveryOption = 'Please select an option.';
+      if (!formData.address) e.address = 'Address is required.';
+    
     }
     setErrors(e);
     return Object.keys(e).length === 0;
