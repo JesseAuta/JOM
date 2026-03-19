@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface Mechanic {
@@ -10,6 +10,7 @@ interface Mechanic {
   phone: string;
   specialization: string;
 }
+
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function MechanicsPage() {
@@ -25,7 +26,9 @@ export default function MechanicsPage() {
 
   const fetchMechanics = async () => {
     try {
-     const res = await axios.get<Mechanic[]>(`${API}/api/mechanics`);
+      const res = await axios.get<Mechanic[]>(`${API}/api/mechanics`, {
+        withCredentials: true,
+      });
       setMechanics(res.data);
     } catch (err) {
       console.error('Error fetching mechanics', err);
@@ -62,10 +65,9 @@ export default function MechanicsPage() {
     )
       return;
     try {
-      const res = await axios.post<Mechanic>(
-        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api/mechanics',
-        newMechanic,
-      );
+      const res = await axios.post(`${API}/api/mechanics`, newMechanic, {
+        withCredentials: true,
+      });
       setMechanics([...mechanics, res.data]);
       setNewMechanic({
         first_name: '',
@@ -81,11 +83,12 @@ export default function MechanicsPage() {
   // Save edited mechanic via backend
   const saveMechanic = async () => {
     if (!editMechanic) return;
+
     try {
-      await axios.put(
-        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + `/api/mechanics/${editMechanic.id}`,
-        editMechanic,
-      );
+      await axios.put(`${API}/api/mechanics/${editMechanic.id}`, editMechanic, {
+        withCredentials: true,
+      });
+
       setMechanics(
         mechanics.map((m) => (m.id === editMechanic.id ? editMechanic : m)),
       );
@@ -99,10 +102,11 @@ export default function MechanicsPage() {
   const deleteMechanic = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this mechanic?'))
       return;
+
     try {
-      await axios.delete(
-        (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + `/api/mechanics/${id}`
-      );
+      await axios.delete(`${API}/api/mechanics/${id}`, {
+        withCredentials: true,
+      });
       setMechanics(mechanics.filter((m) => m.id !== id));
     } catch (err) {
       console.error('Error deleting mechanic', err);

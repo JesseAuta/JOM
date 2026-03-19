@@ -41,18 +41,20 @@ export default function ServicesPage() {
 
   const fetchMechanics = async () => {
     try {
-  const res = await axios.get(`${API}/api/mechanics`);
-  setMechanics(res.data);
-} catch (err) {
-  console.error('Error fetching mechanics', err);
-}
+      const res = await axios.get(`${API}/api/mechanics`, {
+        withCredentials: true,
+      });
+      setMechanics(res.data);
+    } catch (err) {
+      console.error('Error fetching mechanics', err);
+    }
   };
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get<Service[]>(
-        `${API}/api/services`
-      );
+      const res = await axios.get<Service[]>(`${API}/api/services`, {
+        withCredentials: true,
+      });
       setServices(
         res.data.map((s) => ({
           ...s,
@@ -86,10 +88,9 @@ export default function ServicesPage() {
     )
       return;
     try {
-      const res = await axios.post<Service>(
-        `${API}/api/services`,
-        newService,
-      );
+      const res = await axios.post<Service>(`${API}/api/services`, newService, {
+        withCredentials: true,
+      });
       setServices([
         ...services,
         {
@@ -122,10 +123,9 @@ export default function ServicesPage() {
     )
       return;
     try {
-      await axios.put(
-        `${API}/api/services/${editService.id}`,
-        editService,
-      );
+      await axios.put(`${API}/api/services/${editService.id}`, editService, {
+        withCredentials: true,
+      });
       setServices((prev) =>
         prev.map((s) => (s.id === editService.id ? { ...editService } : s)),
       );
@@ -138,7 +138,9 @@ export default function ServicesPage() {
   const deleteServiceHandler = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
-      await axios.delete(`${API}/api/services/${id}`);
+      await axios.delete(`${API}/api/services/${id}`, {
+        withCredentials: true,
+      });
       setServices((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
       console.error('Error deleting service', err);
@@ -148,7 +150,9 @@ export default function ServicesPage() {
   const toggleVisibility = async (s: Service) => {
     const updated = { ...s, hidden: !s.hidden };
     try {
-      await axios.put(`${API}/api/services/${s.id}`, updated);
+      await axios.put(`${API}/api/services/${s.id}`, updated, {
+        withCredentials: true,
+      });
       setServices((prev) =>
         prev.map((srv) => (srv.id === s.id ? updated : srv)),
       );
