@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import MapSection from "./components/MapSection";
 
-const API = "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface Service {
   id: number;
