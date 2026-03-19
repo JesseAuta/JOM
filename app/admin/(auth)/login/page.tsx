@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,14 +18,9 @@ export default function Login() {
 
     try {
       await axios.post(
-        'http://localhost:8000/admin/login',
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        },
+        `${API}/admin/login`,
+        { email, password },
+        { withCredentials: true },
       );
       window.location.href = '/admin/dashboard';
     } catch (err: any) {

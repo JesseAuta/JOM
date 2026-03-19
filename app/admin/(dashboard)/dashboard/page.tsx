@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 type Status = 'new' | 'in_progress' | 'done';
 
@@ -85,6 +87,7 @@ const initialBookings: Booking[] = [
     status: 'done',
   },
 ];
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState(initialBookings);

@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiOutlineLogout, HiOutlineMenuAlt3, HiOutlineX } from 'react-icons/hi';
 import axios from 'axios';
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function RootLayout({
   children,
 }: {
@@ -13,6 +14,24 @@ export default function RootLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
+
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        await axios.get(`${API}/admin/check`, {
+          withCredentials: true,
+        });
+        setLoadingAuth(false);
+      } catch (err) {
+        router.push('/admin/login');
+      }
+    };
+
+    checkAdmin();
+  }, [router]);
+
+  if (loadingAuth) return <p>Loading...</p>;
 
   const handleLogout = async () => {
     try {
