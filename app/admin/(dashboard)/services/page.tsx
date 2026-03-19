@@ -12,13 +12,12 @@ interface Service {
   description: string;
   hidden?: boolean;
 }
-
 interface Mechanic {
   id: number;
   first_name: string;
   last_name: string;
 }
-
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function ServicesPage() {
   const [mechanics, setMechanics] = useState<Mechanic[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -42,10 +41,9 @@ export default function ServicesPage() {
 
   const fetchMechanics = async () => {
     try {
-      const res = await axios.get<Mechanic[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/mechanics`,
-        { withCredentials: true }, // important
-      );
+      const res = await axios.get(`${API}/api/mechanics`, {
+        withCredentials: true,
+      });
       setMechanics(res.data);
     } catch (err) {
       console.error('Error fetching mechanics', err);
@@ -54,10 +52,7 @@ export default function ServicesPage() {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get<Service[]>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services`,
-        { withCredentials: true },
-      );
+      const res = await axios.get<Service[]>(`${API}/api/services`);
       setServices(
         res.data.map((s) => ({
           ...s,
@@ -91,11 +86,9 @@ export default function ServicesPage() {
     )
       return;
     try {
-      const res = await axios.post<Service>(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services`,
-        newService,
-        { withCredentials: true },
-      );
+      const res = await axios.post<Service>(`${API}/api/services`, newService, {
+        withCredentials: true,
+      });
       setServices([
         ...services,
         {
@@ -128,11 +121,9 @@ export default function ServicesPage() {
     )
       return;
     try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services/${editService.id}`,
-        editService,
-        { withCredentials: true },
-      );
+      await axios.put(`${API}/api/services/${editService.id}`, editService, {
+        withCredentials: true,
+      });
       setServices((prev) =>
         prev.map((s) => (s.id === editService.id ? { ...editService } : s)),
       );
@@ -145,10 +136,9 @@ export default function ServicesPage() {
   const deleteServiceHandler = async (id: number) => {
     if (!confirm('Are you sure?')) return;
     try {
-      await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services/${id}`,
-        { withCredentials: true },
-      );
+      await axios.delete(`${API}/api/services/${id}`, {
+        withCredentials: true,
+      });
       setServices((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
       console.error('Error deleting service', err);
@@ -158,11 +148,9 @@ export default function ServicesPage() {
   const toggleVisibility = async (s: Service) => {
     const updated = { ...s, hidden: !s.hidden };
     try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/services/${s.id}`,
-        updated,
-        { withCredentials: true },
-      );
+      await axios.put(`${API}/api/services/${s.id}`, updated, {
+        withCredentials: true,
+      });
       setServices((prev) =>
         prev.map((srv) => (srv.id === s.id ? updated : srv)),
       );

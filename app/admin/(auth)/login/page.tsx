@@ -10,6 +10,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('EMAIL STATE:', email, 'PASSWORD STATE:', password);
