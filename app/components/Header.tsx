@@ -26,8 +26,8 @@ export default function Header() {
       : 'text-[#062E52] font-bold';
 
   return (
-    <header className='sticky top-0 z-50 bg-white shadow-md h-30 transition-all duration-300'>
-      <div className='mx-auto flex max-w-7xl items-center justify-between px-4 h-full'>
+    <header className='sticky top-0 z-50 h-30 bg-white shadow-md transition-all duration-300'>
+      <div className='mx-auto flex h-full max-w-7xl items-center justify-between px-4'>
         {/* Logo */}
         <Link href='/'>
           <Image
@@ -35,12 +35,12 @@ export default function Header() {
             alt='JOM Auto Logo'
             width={180}
             height={50}
-            className='object-contain cursor-pointer'
+            className='h-auto w-30 cursor-pointer object-contain md:w-45'
           />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className='hidden md:flex items-center gap-6 text-sm'>
+        <nav className='hidden items-center gap-6 text-sm md:flex'>
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -48,44 +48,43 @@ export default function Header() {
               className={`${isActive(link.href)} relative group transition`}
             >
               <span className='relative z-10'>{link.name}</span>
-              <span className='absolute left-0 -bottom-1 w-0 h-0.5 bg-[#062E52] transition-all group-hover:w-full'></span>
+              <span className='absolute left-0 -bottom-1 h-0.5 w-0 bg-[#062E52] transition-all group-hover:w-full'></span>
             </Link>
           ))}
         </nav>
 
         {/* Icons + Language Switcher + Mobile */}
-        <div className='flex items-center gap-2 md:gap-4 text-sm'>
+        <div className='flex items-center gap-2 text-sm md:gap-4'>
           {/* Location Icon */}
-          <div className=' md:block'>
-            <MapModal />
-          </div>
+          <div className='md:block'>{/* <MapModal /> */}</div>
 
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className='text-gray-700 hover:text-black transition md:hidden'
+            className='text-gray-700 transition hover:text-black md:hidden'
           >
-            <RxHamburgerMenu size={24} />
+            <RxHamburgerMenu size={32} />
           </button>
+
           <LanguageSwitcher />
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className='md:hidden bg-white shadow-inner border-t'>
-          <div className='flex flex-col px-4 py-3 space-y-2 text-sm'>
+        <div className='border-t bg-white shadow-inner md:hidden'>
+          <div className='flex flex-col space-y-2 px-4 py-3 text-sm'>
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`${isActive(link.href)} hover:text-[#062E52] transition`}
+                className={`${isActive(link.href)} transition hover:text-[#062E52]`}
               >
                 {link.name}
               </Link>
             ))}
-            <div className='pt-2 flex justify-start'>
+            <div className='flex justify-start pt-2'>
               <MapModal />
             </div>
           </div>
