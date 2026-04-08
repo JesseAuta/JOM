@@ -77,7 +77,9 @@ export default function ServicesPage() {
         </div>
 
         {loading ? (
-          <div className='text-center text-gray-400 py-20'>Loading...</div>
+          <div className='text-center text-gray-400 py-20'>
+            Loading...Waking up server average 60s
+          </div>
         ) : filteredServices.length === 0 ? (
           <div className='text-center text-gray-400 py-20'>
             No services found 😕

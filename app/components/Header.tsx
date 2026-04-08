@@ -56,7 +56,9 @@ export default function Header() {
         {/* Icons + Language Switcher + Mobile */}
         <div className='flex items-center gap-2 text-sm md:gap-4'>
           {/* Location Icon */}
-          <div className='md:block'>{/* <MapModal /> */}</div>
+          <div className='hidden md:block'>
+            <MapModal />
+          </div>
 
           {/* Mobile Hamburger */}
           <button

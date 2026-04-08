@@ -183,7 +183,7 @@ export default function ServicesPage() {
         />
         <input
           placeholder='Name'
-          className='border px-2 py-1 rounded flex-1 min-w-[120px] sm:min-w-[160px]'
+          className='border px-2 py-1 rounded flex-1 min-w-30 sm:min-w-40'
           value={newService.name}
           onChange={(e) =>
             setNewService({ ...newService, name: e.target.value })
@@ -204,7 +204,7 @@ export default function ServicesPage() {
         />
 
         {/* Mechanic Dropdown */}
-        <div className='relative flex-1 min-w-[140px] md:min-w-[180px]'>
+        <div className='relative flex-1 min-w-35 md:min-w-45'>
           <button
             type='button'
             className='border px-2 py-1 rounded w-full flex justify-between'
